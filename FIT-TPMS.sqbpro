@@ -1,212 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="FIT-TPMS.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="0"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="58"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title=".Browsables" custom_title="0" dock_id="1" table="0,10:Browsables"/><dock_state state="000000ff00000000fd00000001000000020000011e0000024ffc0100000001fb000000160064006f0063006b00420072006f007700730065003101000000000000011e0000011e00ffffff0000011e0000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1*">-- 1. Bảng users
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    role VARCHAR(20) NOT NULL CHECK (role IN ('student', 'lecturer')),
-    phone VARCHAR(20),
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
--- 2. Bảng students
-CREATE TABLE students (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL UNIQUE,
-    student_code VARCHAR(20) NOT NULL UNIQUE,
-    class_name VARCHAR(50),
-    major VARCHAR(100),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- 3. Bảng lecturers
-CREATE TABLE lecturers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL UNIQUE,
-    department VARCHAR(100),
-    faculty VARCHAR(100),
-    degree VARCHAR(50),
-    bio TEXT,
-    max_thesis INTEGER DEFAULT 0,
-    max_project INTEGER DEFAULT 0,
-    current_thesis INTEGER DEFAULT 0,
-    current_project INTEGER DEFAULT 0,
-    is_active INTEGER DEFAULT 1,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- 4. Bảng semesters
-CREATE TABLE semesters (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(20) NOT NULL,
-    year INTEGER NOT NULL,
-    start_date DATE,
-    end_date DATE,
-    is_current INTEGER DEFAULT 0
-);
-
--- 5. Bảng course_types
-CREATE TABLE course_types (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    type_name VARCHAR(50) NOT NULL UNIQUE
-);
-
--- 6. Bảng courses
-CREATE TABLE courses (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    course_type_id INTEGER NOT NULL,
-    course_code VARCHAR(20) NOT NULL UNIQUE,
-    course_name VARCHAR(100) NOT NULL,
-    credits INTEGER DEFAULT 0,
-    description TEXT,
-    FOREIGN KEY (course_type_id) REFERENCES course_types(id)
-);
-
--- 7. Bảng classes
-CREATE TABLE classes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    class_code VARCHAR(50) NOT NULL UNIQUE,
-    class_name VARCHAR(100) NOT NULL,
-    course_id INTEGER NOT NULL,
-    lecturer_id INTEGER NOT NULL,
-    semester_id INTEGER NOT NULL,
-    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'completed')),
-    FOREIGN KEY (course_id) REFERENCES courses(id),
-    FOREIGN KEY (lecturer_id) REFERENCES lecturers(id),
-    FOREIGN KEY (semester_id) REFERENCES semesters(id)
-);
-
--- 8. Bảng class_students
-CREATE TABLE class_students (
-    class_id INTEGER NOT NULL,
-    student_id INTEGER NOT NULL,
-    grade REAL,
-    PRIMARY KEY (class_id, student_id),
-    FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
-    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
-);
-
--- 9. Bảng registrations
-CREATE TABLE registrations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_id INTEGER NOT NULL,
-    lecturer_id INTEGER NOT NULL,
-    course_type_id INTEGER NOT NULL,
-    semester_id INTEGER NOT NULL,
-    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
-    registered_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    processed_at DATETIME,
-    FOREIGN KEY (student_id) REFERENCES students(id),
-    FOREIGN KEY (lecturer_id) REFERENCES lecturers(id),
-    FOREIGN KEY (course_type_id) REFERENCES course_types(id),
-    FOREIGN KEY (semester_id) REFERENCES semesters(id)
-);
-
--- 10. Bảng supervisions
-CREATE TABLE supervisions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_id INTEGER NOT NULL,
-    lecturer_id INTEGER NOT NULL,
-    class_id INTEGER NOT NULL,
-    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'completed')),
-    start_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    end_date DATETIME,
-    FOREIGN KEY (student_id) REFERENCES students(id),
-    FOREIGN KEY (lecturer_id) REFERENCES lecturers(id),
-    FOREIGN KEY (class_id) REFERENCES classes(id)
-);
-
--- 11. Bảng lecturer_quotas
-CREATE TABLE lecturer_quotas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    lecturer_id INTEGER NOT NULL,
-    semester_id INTEGER NOT NULL,
-    course_type_id INTEGER NOT NULL,
-    max_students INTEGER NOT NULL,
-    current_students INTEGER DEFAULT 0,
-    FOREIGN KEY (lecturer_id) REFERENCES lecturers(id),
-    FOREIGN KEY (semester_id) REFERENCES semesters(id),
-    FOREIGN KEY (course_type_id) REFERENCES course_types(id),
-    UNIQUE(lecturer_id, semester_id, course_type_id)
-);
-
--- 12. Bảng assignments
-CREATE TABLE assignments (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    class_id INTEGER NOT NULL,
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    deadline DATETIME NOT NULL,
-    max_file_size INTEGER DEFAULT 10,
-    allowed_file_types VARCHAR(200),
-    is_overdue INTEGER DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
-);
-
--- 13. Bảng submissions
-CREATE TABLE submissions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    assignment_id INTEGER NOT NULL,
-    student_id INTEGER NOT NULL,
-    file_url VARCHAR(500),
-    file_name VARCHAR(255),
-    file_size INTEGER,
-    progress_report TEXT,
-    submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    is_late INTEGER DEFAULT 0,
-    is_final INTEGER DEFAULT 0,
-    version INTEGER DEFAULT 1,
-    FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE,
-    FOREIGN KEY (student_id) REFERENCES students(id)
-);
-
--- 14. Bảng feedbacks
-CREATE TABLE feedbacks (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    submission_id INTEGER NOT NULL,
-    lecturer_id INTEGER NOT NULL,
-    content TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (submission_id) REFERENCES submissions(id) ON DELETE CASCADE,
-    FOREIGN KEY (lecturer_id) REFERENCES lecturers(id)
-);
-
--- 15. Bảng published_reports
-CREATE TABLE published_reports (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_id INTEGER NOT NULL,
-    class_id INTEGER NOT NULL,
-    topic_id INTEGER NOT NULL,
-    file_url VARCHAR(500),
-    source_code_url VARCHAR(500),
-    published_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (student_id) REFERENCES students(id),
-    FOREIGN KEY (class_id) REFERENCES classes(id),
-    FOREIGN KEY (topic_id) REFERENCES topics(id)
-);
-
--- 16. Bảng notifications
-CREATE TABLE notifications (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    title VARCHAR(200) NOT NULL,
-    content TEXT,
-    related_id INTEGER,
-    is_read INTEGER DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- 17. Bảng topics
-CREATE TABLE topics (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    student_id INTEGER NOT NULL,
-    class_id INTEGER NOT NULL,
-    title VARCHAR(500) NOT NULL,
-    description TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (student_id) REFERENCES students(id),
-    FOREIGN KEY (class_id) REFERENCES classes(id)
-);</sql><current_tab id="0"/></tab_sql></sqlb_project>
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="FIT-TPMS.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3543"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="sqlite_sequence" custom_title="0" dock_id="1" table="4,15:mainsqlite_sequence"/><dock_state state="000000ff00000000fd0000000100000002000001620000024ffc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000000001620000012300ffffff000001620000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="assignments" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="35"/><column index="2" value="55"/><column index="3" value="199"/><column index="4" value="300"/><column index="5" value="159"/><column index="6" value="86"/><column index="7" value="135"/><column index="8" value="159"/><column index="9" value="71"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="sqlite_sequence" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="143"/><column index="2" value="35"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">-- View: Danh sách báo cáo đã đăng lên web
+CREATE VIEW view_published_reports AS
+SELECT 
+    pr.id AS report_id,
+    t.title,
+    t.description AS abstract,
+    pr.file_url,
+    pr.source_code_url,
+    pr.published_at,
+    s.student_code,
+    u.full_name AS student_name,
+    u2.full_name AS lecturer_name,
+    ct.type_name AS course_type,
+    sem.name AS semester,
+    sem.year
+FROM published_reports pr
+JOIN topics t ON pr.topic_id = t.id
+JOIN students s ON pr.student_id = s.id
+JOIN users u ON s.user_id = u.id
+JOIN classes c ON pr.class_id = c.id
+JOIN lecturers l ON c.lecturer_id = l.id
+JOIN users u2 ON l.user_id = u2.id
+JOIN courses cr ON c.course_id = cr.id
+JOIN course_types ct ON cr.course_type_id = ct.id
+JOIN semesters sem ON c.semester_id = sem.id
+ORDER BY pr.published_at DESC;</sql><current_tab id="0"/></tab_sql></sqlb_project>
