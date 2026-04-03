@@ -380,7 +380,11 @@
             <i class="fa-regular fa-bell action-icon"></i>
             <i class="fa-regular fa-circle-question action-icon"></i>
             <div class="user-profile">
-                <div class="avatar">AD</div>
+                {% if session.get('user_id') %}
+                    <div class="avatar">{{ session.get('username')[:2].upper() }}</div>
+                {% else %}
+                    <div class="avatar">?</div>
+                {% endif %}
             </div>
         </div>
     </header>
@@ -413,6 +417,21 @@
                         <span>My Project</span>
                     </a>
                 </li>
+                {% if session.get('user_id') %}
+                <li class="nav-item">
+                    <a href="{{ url_for('login.logout') }}" class="nav-link" style="color: #dc2626;">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Logout ({{ session.get('username') }})</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{{ url_for('login.login') }}" class="nav-link">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Login</span>
+                    </a>
+                </li>
+                {% endif %}
             </ul>
         </aside>
 
