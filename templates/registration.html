@@ -1,459 +1,390 @@
-<!DOCTYPE html>
-<html lang="vi">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supervisor Registration | FIT-TPMS</title>
-    <!-- Google Font: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #002D8E;
-            --primary-light: #E7EDFF;
-            --text-dark: #1F2937;
-            --text-muted: #6B7280;
-            --bg-page: #FBF8FF;
-            --white: #FFFFFF;
-            --border-color: #E2E8F0;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            --shadow-hover: 0 10px 25px rgba(0, 45, 142, 0.1);
-            --transition: all 0.3s ease;
-        }
+{% block title %}Supervisor Registration{% endblock %}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+{% block styles %}
+<style>
+    :root {
+        --primary-color: #002D8E;
+        --primary-light: #E7EDFF;
+        --text-dark: #1F2937;
+        --text-muted: #6B7280;
+        --bg-page: #FBF8FF;
+        --white: #FFFFFF;
+        --border-color: #E2E8F0;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        --shadow-hover: 0 10px 25px rgba(0, 45, 142, 0.1);
+        --transition: all 0.3s ease;
+    }
 
-        body {
-            background-color: var(--bg-page);
-            color: var(--text-dark);
-            line-height: 1.5;
-            padding: 40px 20px;
-        }
+    .registration-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
+    /* HEADER SECTION */
+    .reg-header {
+        margin-bottom: 40px;
+    }
 
-        /* HEADER SECTION */
-        .header {
-            margin-bottom: 40px;
-        }
+    .reg-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+    }
 
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-        }
+    .reg-header p {
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        max-width: 600px;
+    }
 
-        .header p {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            max-width: 600px;
-        }
+    /* COURSE SELECTION TABS */
+    .section-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 20px;
+        display: block;
+    }
 
-        /* COURSE SELECTION TABS */
-        .section-label {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 20px;
-            display: block;
-        }
+    .tabs-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
 
-        .tabs-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
+    .tab-card {
+        background: var(--white);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+    }
 
-        .tab-card {
-            background: var(--white);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
+    .tab-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+    }
 
-        .tab-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }
+    .tab-card.active {
+        border-color: var(--primary-color);
+        background: var(--white);
+    }
 
-        .tab-card.active {
-            border-color: var(--primary-color);
-            background: var(--white);
-        }
+    .tab-content h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
 
-        .tab-content h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
+    .tab-content span {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
 
-        .tab-content span {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
+    .tab-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
 
-        .tab-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
+    .tab-card.active .tab-icon {
+        background: var(--primary-color);
+        color: var(--white);
+    }
 
-        .tab-card.active .tab-icon {
-            background: var(--primary-color);
-            color: var(--white);
-        }
+    /* SEARCH BAR */
+    .search-container {
+        position: relative;
+        margin-bottom: 40px;
+    }
 
-        /* SEARCH BAR */
-        .search-container {
-            position: relative;
-            margin-bottom: 40px;
-        }
+    .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+    }
 
-        .search-icon {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-        }
+    .search-input {
+        width: 100%;
+        padding: 18px 20px 18px 56px;
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        background: #F4F5F9;
+        font-size: 1rem;
+        outline: none;
+        transition: var(--transition);
+    }
 
-        .search-input {
-            width: 100%;
-            padding: 18px 20px 18px 56px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            background: #F4F5F9;
-            font-size: 1rem;
-            outline: none;
-            transition: var(--transition);
-        }
+    .search-input:focus {
+        background: var(--white);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(0, 45, 142, 0.1);
+    }
 
-        .search-input:focus {
-            background: var(--white);
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(0, 45, 142, 0.1);
-        }
+    /* LECTURER GRID */
+    .lecturers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+    }
 
-        /* LECTURER GRID */
-        .lecturers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24px;
-        }
+    .lecturer-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+        border: 1px solid transparent;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
 
-        .lecturer-card {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-            border: 1px solid transparent;
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
+    .lecturer-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(circle at top right, rgba(0, 45, 142, 0.05), transparent);
+        pointer-events: none;
+    }
 
-        .lecturer-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle at top right, rgba(0, 45, 142, 0.05), transparent);
-            pointer-events: none;
-        }
+    .lecturer-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0, 45, 142, 0.1);
+        border-color: var(--primary-light);
+    }
 
-        .lecturer-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0, 45, 142, 0.1);
-            border-color: var(--primary-light);
-        }
+    .card-header {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
 
-        .card-header {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
+    .avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 16px;
+        object-fit: cover;
+        background: #EDF2F7;
+    }
 
-        .avatar {
-            width: 72px;
-            height: 72px;
-            border-radius: 16px;
-            object-fit: cover;
-            background: #EDF2F7;
-        }
+    .name-info h4 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        line-height: 1.3;
+        margin-bottom: 4px;
+        color: var(--text-dark);
+    }
 
-        .name-info h4 {
-            font-size: 1.15rem;
-            font-weight: 700;
-            line-height: 1.3;
-            margin-bottom: 4px;
-            color: var(--text-dark);
-        }
+    .faculty {
+        font-size: 0.85rem;
+        color: var(--primary-color);
+        font-weight: 500;
+    }
 
-        .faculty {
-            font-size: 0.85rem;
-            color: var(--primary-color);
-            font-weight: 500;
-        }
+    .focus-section {
+        margin-bottom: 20px;
+        flex: 1;
+    }
 
-        .focus-section {
-            margin-bottom: 20px;
-            flex: 1;
-        }
+    .focus-title {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 8px;
+        display: block;
+    }
 
-        .focus-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 8px;
-            display: block;
-        }
+    .focus-text {
+        font-size: 0.95rem;
+        color: var(--text-dark);
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-clamp: 3;
+    }
 
-        .focus-text {
-            font-size: 0.95rem;
-            color: var(--text-dark);
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
+    .register-btn {
+        width: 100%;
+        padding: 14px;
+        background: var(--primary-color);
+        color: var(--white);
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: var(--transition);
+    }
 
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
+    .register-btn:hover {
+        background: #001f66;
+        transform: scale(1.02);
+    }
 
-        .tag {
-            font-size: 0.75rem;
-            font-weight: 500;
-            padding: 4px 12px;
-            background: #F3F4F6;
-            color: #4B5563;
-            border-radius: 100px;
-        }
+    .empty-message {
+        grid-column: 1/-1;
+        text-align: center;
+        padding: 40px;
+        color: #9CA3AF;
+    }
+</style>
+{% endblock %}
 
-        .register-btn {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary-color);
-            color: var(--white);
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
+{% block content %}
+<div class="registration-container">
+    <!-- HEADER -->
+    <header class="reg-header">
+        <h1>Đăng kí giảng viên hướng dẫn</h1>
+        <p>Lựa chọn giảng viên hướng dẫn phù hợp với hướng đi của đề tài</p>
+    </header>
 
-        .register-btn:hover {
-            background: #001f66;
-            transform: scale(1.02);
-        }
-
-        .empty-message {
-            grid-column: 1/-1;
-            text-align: center;
-            padding: 40px;
-            color: #9CA3AF;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="container">
-        <!-- HEADER -->
-        <header class="header">
-            <h1>Đăng kí giảng viên hướng dẫn</h1>
-            <p>Lựa chọn giảng viên hướng dẫn phù hợp với hướng đi của đề tài</p>
-        </header>
-
-        <!-- COURSE SELECTION -->
-        <span class="section-label">Đăng ký cho học phần nào?</span>
-        <div class="tabs-grid">
-            <div class="tab-card active" id="tab-project" onclick="switchType('project')">
-                <div class="tab-content">
-                    <h3>Đề án</h3>
-                    <span>Project Research</span>
-                </div>
-                <div class="tab-icon">
-                    <i class="fa-solid fa-rocket"></i>
-                </div>
+    <!-- COURSE SELECTION -->
+    <span class="section-label">Đăng ký cho học phần nào?</span>
+    <div class="tabs-grid">
+        <div class="tab-card active" id="tab-project" onclick="switchType('project')">
+            <div class="tab-content">
+                <h3>Đề án</h3>
+                <span>Project Research</span>
             </div>
-            <div class="tab-card" id="tab-thesis" onclick="switchType('thesis')">
-                <div class="tab-content">
-                    <h3>Khóa luận</h3>
-                    <span>Graduation Thesis</span>
-                </div>
-                <div class="tab-icon">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </div>
+            <div class="tab-icon">
+                <i class="fa-solid fa-rocket"></i>
             </div>
         </div>
-
-        <!-- SEARCH -->
-        <div class="search-container">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="searchInput" class="search-input"
-                placeholder="Tìm tên giảng viên hoặc chuyên môn nghiên cứu..." oninput="handleSearch()">
-        </div>
-
-        <!-- LECTURER LISTING -->
-        <div class="lecturers-grid" id="lecturerListing">
-            <!-- Will be populated by JS -->
+        <div class="tab-card" id="tab-thesis" onclick="switchType('thesis')">
+            <div class="tab-content">
+                <h3>Khóa luận</h3>
+                <span>Graduation Thesis</span>
+            </div>
+            <div class="tab-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
         </div>
     </div>
 
-    <script>
-        // Dữ liệu từ Flask backend
-        let currentType = 'project';
-        let projectLecturers = {{ project_lecturers | tojson }};
-        let thesisLecturers = {{ thesis_lecturers | tojson }};
+    <!-- SEARCH -->
+    <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" class="search-input"
+            placeholder="Tìm tên giảng viên hoặc chuyên môn nghiên cứu..." oninput="handleSearch()">
+    </div>
 
-        window.onload = () => {
-            renderLecturers();
-        };
+    <!-- LECTURER LISTING -->
+    <div class="lecturers-grid" id="lecturerListing">
+        <!-- Will be populated by JS -->
+    </div>
+</div>
 
-        function switchType(type) {
-            currentType = type;
-            document.getElementById('tab-project').classList.toggle('active', type === 'project');
-            document.getElementById('tab-thesis').classList.toggle('active', type === 'thesis');
-            renderLecturers();
+<script>
+    // Dữ liệu từ Flask backend
+    let currentType = 'project';
+    let projectLecturers = {{ project_lecturers | tojson }};
+    let thesisLecturers = {{ thesis_lecturers | tojson }};
+
+    window.onload = () => {
+        renderLecturers();
+    };
+
+    function switchType(type) {
+        currentType = type;
+        document.getElementById('tab-project').classList.toggle('active', type === 'project');
+        document.getElementById('tab-thesis').classList.toggle('active', type === 'thesis');
+        renderLecturers();
+    }
+
+    function handleSearch() {
+        renderLecturers();
+    }
+
+    function renderLecturers() {
+        const container = document.getElementById('lecturerListing');
+        const searchVal = document.getElementById('searchInput').value.toLowerCase();
+
+        const rawList = (currentType === 'project') ? projectLecturers : thesisLecturers;
+
+        // Lọc theo tên hoặc lĩnh vực nghiên cứu
+        const filteredList = rawList.filter(lecturer => {
+            // Lấy các giá trị để so sánh
+            const fullName = lecturer.full_name || lecturer.name || `Giảng viên ${lecturer.id}`;
+            const researchArea = lecturer.research_area || lecturer.bio || '';
+            const degree = lecturer.degree || '';
+            const faculty = lecturer.faculty || lecturer.department || '';
+
+            return fullName.toLowerCase().includes(searchVal) ||
+                researchArea.toLowerCase().includes(searchVal) ||
+                faculty.toLowerCase().includes(searchVal);
+        });
+
+        container.innerHTML = '';
+
+        if (filteredList.length === 0) {
+            container.innerHTML = `<div class="empty-message">
+                Không tìm thấy giảng viên nào phù hợp.
+            </div>`;
+            return;
         }
 
-        function handleSearch() {
-            renderLecturers();
-        }
+        filteredList.forEach(lecturer => {
+            const name = lecturer.full_name || lecturer.name || `Giảng viên ${lecturer.id}`;
+            const degree = lecturer.degree || 'Giảng viên';
+            const faculty = lecturer.faculty || lecturer.department || 'Khoa Công nghệ thông tin';
+            const researchArea = lecturer.research_area || lecturer.bio || 'Đang cập nhật thông tin nghiên cứu';
 
-        function renderLecturers() {
-            const container = document.getElementById('lecturerListing');
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=002D8E&color=fff&bold=true`;
 
-            const rawList = (currentType === 'project') ? projectLecturers : thesisLecturers;
+            const card = document.createElement('div');
+            card.className = 'lecturer-card';
 
-            // Lọc theo tên hoặc lĩnh vực nghiên cứu
-            const filteredList = rawList.filter(lecturer => {
-                // Lấy các giá trị để so sánh
-                const fullName = lecturer.full_name || lecturer.name || `Giảng viên ${lecturer.id}`;
-                const researchArea = lecturer.research_area || lecturer.bio || '';
-                const degree = lecturer.degree || '';
-                const faculty = lecturer.faculty || lecturer.department || '';
-
-                return fullName.toLowerCase().includes(searchVal) ||
-                    researchArea.toLowerCase().includes(searchVal) ||
-                    faculty.toLowerCase().includes(searchVal);
-            });
-
-            container.innerHTML = '';
-
-            if (filteredList.length === 0) {
-                container.innerHTML = `<div class="empty-message">
-                    Không tìm thấy giảng viên nào phù hợp.
-                </div>`;
-                return;
-            }
-
-            filteredList.forEach(lecturer => {
-                // ============================================
-                // PHẦN XỬ LÝ BIẾN CHO GIẢNG VIÊN
-                // ============================================
-                const name = lecturer.full_name || lecturer.name || `Giảng viên ${lecturer.id}`;
-                const degree = lecturer.degree || 'Giảng viên';
-                const faculty = lecturer.faculty || lecturer.department || 'Khoa Công nghệ thông tin';
-                const researchArea = lecturer.research_area || lecturer.bio || 'Đang cập nhật thông tin nghiên cứu';
-                // ============================================
-
-                // Tạo avatar từ tên
-                const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=002D8E&color=fff&bold=true`;
-
-                const card = document.createElement('div');
-                card.className = 'lecturer-card';
-
-                card.innerHTML = `
-                    <div class="card-header">
-                        <img src="${avatar}" alt="${name}" class="avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random'">
-                        <div class="name-info">
-                            <h4>${name}</h4>
-                            <div class="faculty">${faculty}</div>
-                        </div>
+            card.innerHTML = `
+                <div class="card-header">
+                    <img src="${avatar}" alt="${name}" class="avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random'">
+                    <div class="name-info">
+                        <h4>${name}</h4>
+                        <div class="faculty">${faculty}</div>
                     </div>
-                    <div class="focus-section">
-                        <span class="focus-title"><i class="fa-solid fa-book"></i> Lĩnh vực nghiên cứu</span>
-                        <p class="focus-text">${researchArea}</p>
-                    </div>
-                    <button class="register-btn" onclick="registerSupervisor(${lecturer.id})">
-                        <i class="fa-regular fa-paper-plane"></i> Đăng ký hướng dẫn
-                    </button>
-                `;
-                container.appendChild(card);
-            });
-        }
+                </div>
+                <div class="focus-section">
+                    <span class="focus-title"><i class="fa-solid fa-book"></i> Lĩnh vực nghiên cứu</span>
+                    <p class="focus-text">${researchArea}</p>
+                </div>
+                <button class="register-btn" onclick="registerSupervisor(${lecturer.id})">
+                    <i class="fa-regular fa-paper-plane"></i> Đăng ký hướng dẫn
+                </button>
+            `;
+            container.appendChild(card);
+        });
+    }
 
-        function registerSupervisor(lecturerId) {
-            const courseTypeId = currentType === 'project' ? 1 : 2;
-            const courseTypeName = currentType === 'project' ? 'Đề án' : 'Khóa luận';
-
-            // Xác nhận trước khi đăng ký
-            if (confirm(`Bạn có chắc chắn muốn đăng ký giảng viên này cho học phần ${courseTypeName}?`)) {
-                // Gửi request đến backend
-                fetch('/registration/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        lecturer_id: lecturerId,
-                        course_type_id: courseTypeId
-                    })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Đăng ký thành công! Vui lòng chờ giảng viên duyệt.');
-                            window.location.reload();
-                        } else {
-                            alert('Đăng ký thất bại: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        alert('Có lỗi xảy ra: ' + error);
-                    });
-            }
-        }
-    </script>
-</body>
-
-</html>
+    function registerSupervisor(lecturerId) {
+        const courseTypeId = currentType === 'project' ? 1 : 2;
+        window.location.href = `/registration/form/${lecturerId}?course_type_id=${courseTypeId}`;
+    }
+</script>
+{% endblock %}
