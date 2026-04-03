@@ -26,7 +26,10 @@ def theses():
         courses.course_name,
         course_types.type_name,
         users.full_name AS lecturer_name,
-
+        
+        u2.full_name AS student_name,
+        students.id AS student_code,
+        
         -- lấy từ published_reports
         published_reports.published_at,
         published_reports.file_url,
@@ -39,6 +42,9 @@ def theses():
     JOIN course_types ON courses.course_type_id = course_types.id
     JOIN lecturers ON classes.lecturer_id = lecturers.id
     JOIN users ON lecturers.user_id = users.id
+    
+    JOIN students ON topics.student_id = students.id
+    JOIN users u2 ON students.user_id = u2.id
 
     LEFT JOIN published_reports
         ON published_reports.topic_id = topics.id
