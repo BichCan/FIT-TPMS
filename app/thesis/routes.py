@@ -2,8 +2,8 @@ from flask import render_template, request
 from app.database import get_db
 from app.thesis import thesis_bp
 
-@thesis_bp.route("/theses")
-def theses():
+@thesis_bp.route("/theses-projects")
+def thesesprojects():
     q = request.args.get("q", "")
     year = request.args.get("year", "")
     type_ = request.args.get("type", "all")

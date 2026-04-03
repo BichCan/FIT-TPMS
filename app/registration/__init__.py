@@ -1,7 +1,7 @@
 from flask import Blueprint
 
-thesis_bp = Blueprint(
-    "thesis",
+registration_bp = Blueprint(
+    "registration",
     __name__,
     template_folder=None,
     static_folder=None)

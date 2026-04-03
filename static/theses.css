@@ -26,28 +26,32 @@ body {
 /* ===== SEARCH ===== */
 .search-box {
     position: relative;
-    max-width: 100%;
-    height: 50px;
-    margin-bottom: 15px;
+    margin-bottom: 40px;
 }
 
 .search-box input {
     width: 100%;
-    height:100%;
-    padding: 10px 20px 10px 40px;
-    border-radius: 10px;
-    border: 1px solid #eee;
+    padding: 18px 20px 18px 56px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    background: #F4F5F9;
+    font-size: 1rem;
     outline: none;
-    background: #v;
+    transition: var(--transition);
 }
 
 .search-box .icon {
     position: absolute;
     left: 20px;
-    top: 48%;
+    top: 50%;
     transform: translateY(-50%);
-    color: #aaa;
-    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.search-box input:focus {
+    background: var(--white);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 45, 142, 0.1);
 }
 
 /* ===== TOP BAR ===== */
@@ -80,9 +84,12 @@ body {
 
 /* ===== FILTER ===== */
 select {
-    padding: 6px 10px;
+    padding: 10px 10px;
     border-radius: 8px;
     border: 1px solid #ddd;
+    font-size: 13px;
+    font-weight: bold;
+    color: #000000;
 }
 
 /* ===== GRID ===== */
@@ -91,7 +98,8 @@ select {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
 
-    align-items: start; /* ⭐ fix card dính */
+    align-items: start;
+    /* ⭐ fix card dính */
 }
 
 /* ===== CARD ===== */
@@ -114,7 +122,7 @@ select {
     right: 20px;
     font-size: 12px;
     color: #3B3C45;
-    font-weight:bold;
+    font-weight: bold;
 }
 
 /* ===== TYPE ===== */
@@ -191,13 +199,14 @@ select {
 /* ===== HOVER CARD ===== */
 .card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 
 .project {
     background: #e0ecff;
     color: #4a6cf7;
 }
+
 .thesis {
     background: #fff2e0;
     color: #ff9800;
@@ -250,17 +259,21 @@ select {
 
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* ⭐ đẩy 2 item ra xa */
-    height: 180px; /* ⭐ tăng chiều cao */
+    justify-content: space-between;
+    /* ⭐ đẩy 2 item ra xa */
+    height: 180px;
+    /* ⭐ tăng chiều cao */
 }
 
 .info-item p {
     margin-top: 4px;
     color: #333;
 }
+
 .detail-layout {
     display: flex;
-    gap: 50px; /* tăng khoảng cách */
+    gap: 50px;
+    /* tăng khoảng cách */
 }
 
 /* BUTTONS */
@@ -312,7 +325,8 @@ select {
 /* hàng chứa */
 .author-row {
     display: flex;
-    gap: 40px; /* khoảng cách giữa 2 ô */
+    gap: 40px;
+    /* khoảng cách giữa 2 ô */
     margin: 15px 0 25px;
 }
 
