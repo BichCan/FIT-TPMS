@@ -302,11 +302,19 @@
     </div>
 </div>
 
-<script>
-    // Dữ liệu từ Flask backend
-    let currentType = 'project';
-    let projectLecturers = {{ project_lecturers | tojson }};
-    let thesisLecturers = {{ thesis_lecturers | tojson }};
+    <!-- Injecting data as JSON inside a special script tag to avoid IDE syntax errors -->
+    <script id="project-lecturers-data" type="application/json">
+        {{ project_lecturers | tojson | safe }}
+    </script>
+    <script id="thesis-lecturers-data" type="application/json">
+        {{ thesis_lecturers | tojson | safe }}
+    </script>
+
+    <script>
+        // Dữ liệu từ Flask backend
+        let currentType = 'project';
+        const projectLecturers = JSON.parse(document.getElementById('project-lecturers-data').textContent);
+        const thesisLecturers = JSON.parse(document.getElementById('thesis-lecturers-data').textContent);
 
     window.onload = () => {
         renderLecturers();
