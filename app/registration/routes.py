@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import render_template, request, redirect, url_for, flash, jsonify
+from flask import render_template, request, redirect, url_for, flash, jsonify, session
 from app.database import get_db
 from app.registration import registration_bp
 
@@ -80,8 +80,10 @@ def registration_submit():
     if not current_semester:
         return jsonify({"success": False, "message": "Không tìm thấy học kỳ hiện tại."}), 400
         
-    # Giả định student_id = 1 cho prototype (vì chưa có login session)
-    student_id = 1
+    # Lấy student_id từ session
+    student_id = session.get("user_id")
+    if not student_id:
+        return jsonify({"success": False, "message": "Bạn cần đăng nhập để thực hiện hành động này."}), 401
     
     db = get_db()
     cursor = db.cursor()
