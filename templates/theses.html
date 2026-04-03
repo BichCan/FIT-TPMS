@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Theses</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
@@ -15,7 +16,7 @@
 
     <!-- SEARCH -->
     <div class="search-box">
-        <span class="icon"></span>
+        <span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
         <input name="q" value="{{ q }}" placeholder="Tìm đề tài hoặc giảng viên...">
     </div>
 
@@ -74,12 +75,12 @@
     <div class="actions">
         <a href="{{ t['source_code_url'] or '#' }}"
            class="link {{ 'disabled' if not t['source_code_url'] else '' }}">
-            &lt;/&gt;Source code
+            <i class="fa-solid fa-code"></i> Source code
         </a>
 
         <a href="{{ t['file_url'] or '#' }}"
            class="link {{ 'disabled' if not t['file_url'] else '' }}">
-            ⬇Download
+            <i class="fa-solid fa-download"></i> Tải PDF
         </a>
     </div>
 

@@ -7,7 +7,7 @@
 
 /* ===== BODY ===== */
 body {
-    background: #fff5f8;
+    background: #FBF8FF;
     padding: 30px;
 }
 
@@ -19,30 +19,32 @@ body {
 
 /* ===== TITLE ===== */
 .page-title {
-    color: #1e3a8a;
+    color: #00288E;
     margin-bottom: 15px;
 }
 
 /* ===== SEARCH ===== */
 .search-box {
     position: relative;
-    max-width: 450px;
+    max-width: 100%;
+    height: 50px;
     margin-bottom: 15px;
 }
 
 .search-box input {
     width: 100%;
-    padding: 10px 12px 10px 34px;
+    height:100%;
+    padding: 10px 20px 10px 40px;
     border-radius: 10px;
     border: 1px solid #eee;
     outline: none;
-    background: white;
+    background: #v;
 }
 
 .search-box .icon {
     position: absolute;
-    left: 10px;
-    top: 50%;
+    left: 20px;
+    top: 48%;
     transform: translateY(-50%);
     color: #aaa;
     font-size: 13px;
@@ -72,7 +74,7 @@ body {
 }
 
 .tab.active {
-    background: #1e3a8a;
+    background: #00288E;
     color: white;
 }
 
@@ -94,7 +96,7 @@ select {
 
 /* ===== CARD ===== */
 .card {
-    background: white;
+    background: #FEFEFF;
     border-radius: 16px;
     padding: 20px;
     border: 1px solid #f0f0f0;
@@ -108,10 +110,11 @@ select {
 /* ===== YEAR ===== */
 .year {
     position: absolute;
-    top: 10px;
-    right: 12px;
+    top: 20px;
+    right: 20px;
     font-size: 12px;
-    color: #ff7aa2;
+    color: #3B3C45;
+    font-weight:bold;
 }
 
 /* ===== TYPE ===== */
@@ -155,7 +158,8 @@ select {
 .card .actions a.link {
     text-decoration: none !important;
     font-size: 15px;
-    color: #162d6b !important;
+    font-weight: bold;
+    color: #1A3D99 !important;
 }
 
 .card .actions a.link:hover {
@@ -174,7 +178,7 @@ select {
     text-align: center;
     padding: 8px;
     border-radius: 10px;
-    background: #1e3a8a;
+    background: #00288E;
     color: white;
     text-decoration: none;
     font-size: 13px;
@@ -227,7 +231,7 @@ select {
 /* TITLE */
 .title {
     font-size: 18px;
-    color: #1e3a8a;
+    color: #00288E;
     margin-bottom: 10px;
 }
 
@@ -268,7 +272,7 @@ select {
 .btn {
     padding: 10px 14px;
     border-radius: 10px;
-    background: #1e3a8a;
+    background: #00288E;
     color: white;
     text-decoration: none;
 }
@@ -281,7 +285,7 @@ select {
 .back {
     display: inline-block;
     margin-bottom: 20px;
-    color: #1e3a8a;
+    color: #00288E;
     text-decoration: none;
 }
 
@@ -343,6 +347,6 @@ select {
 
 .section-title {
     margin: 20px 0 10px;
-    color: #1e3a8a;
+    color: #00288E;
     font-size: 16px;
 }
