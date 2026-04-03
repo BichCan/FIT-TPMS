@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký giảng viên hướng dẫn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+        }
+
+        .semester-info {
+            background: #e8f4fd;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            background: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 0;
+            font-size: 1.3rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .available {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .full {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .btn-register {
+            background-color: #27ae60;
+            color: white;
+            padding: 6px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-register:hover {
+            background-color: #219a52;
+        }
+
+        .btn-full {
+            background-color: #95a5a6;
+            color: white;
+            padding: 6px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: not-allowed;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-thesis {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .badge-project {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-style: italic;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.8rem;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Đăng ký giảng viên hướng dẫn</h1>
+
+        <div class="semester-info">
+            📅 Học kỳ: {{ current_semester.name }} - Năm học: {{ current_semester.year }}
+            <br>
+            ⏰ Thời gian đăng ký: {{ current_semester.start_date }} đến {{ current_semester.end_date }}
+        </div>
+
+        <!-- Đề án section -->
+        <div class="section">
+            <h2>📘 Đề án</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Giảng viên</th>
+                        <th>Khoa</th>
+                        <th>Học vị</th>
+                        <th>Giới hạn</th>
+                        <th>Đã nhận</th>
+                        <th>Còn slot</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if project_lecturers %}
+                        {% for lecturer in project_lecturers %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <strong>{{ lecturer[1] }}</strong>
+                                {# Nếu lecturer là tuple, chỉ số 1 là full_name #}
+                            </td>
+                            <td>{{ lecturer[2] }}</td>
+                            <td>{{ lecturer[3] }}</td>
+                            <td>?</td>
+                            <td>?</td>
+                            <td class="available">?</td>
+                            <td>
+                                <a href="#" class="btn-register">Đăng ký</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="empty-message">
+                                Không có giảng viên nào nhận đăng ký Đề án trong học kỳ này.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Khóa luận section -->
+        <div class="section">
+            <h2>📕 Khóa luận</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Giảng viên</th>
+                        <th>Khoa</th>
+                        <th>Học vị</th>
+                        <th>Giới hạn</th>
+                        <th>Đã nhận</th>
+                        <th>Còn slot</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if thesis_lecturers %}
+                        {% for lecturer in thesis_lecturers %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <strong>{{ lecturer[1] }}</strong>
+                            </td>
+                            <td>{{ lecturer[2] }}</td>
+                            <td>{{ lecturer[3] }}</td>
+                            <td>?</td>
+                            <td>?</td>
+                            <td class="available">?</td>
+                            <td>
+                                <a href="#" class="btn-register">Đăng ký</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="empty-message">
+                                Không có giảng viên nào nhận đăng ký Khóa luận trong học kỳ này.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            © 2025 - Hệ thống quản lý Đề án & Khóa luận
+        </footer>
+    </div>
+</body>
+</html>

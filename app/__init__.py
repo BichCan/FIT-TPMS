@@ -11,7 +11,9 @@ def create_app():
     )
 
     from .thesis import thesis_bp
-    from .thesis import routes
     app.register_blueprint(thesis_bp)
+
+    from .registration import registration_bp
+    app.register_blueprint(registration_bp)
 
     return app
