@@ -20,4 +20,7 @@ def create_app():
     from .login import login_bp
     app.register_blueprint(login_bp)
 
+    from .supervisor import supervisor_bp
+    app.register_blueprint(supervisor_bp)
+
     return app
