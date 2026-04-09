@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow border-0">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0 fw-bold">CHI TIẾT ĐĂNG KÝ HỌC PHẦN</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 class="text-muted text-uppercase small fw-bold">Thông tin sinh viên</h6>
+                    <p class="mb-1"><strong>Mã SV:</strong> {{ project['student_code'] }}</p>
+                    <p><strong>Họ tên:</strong> {{ project['student_name'] }}</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h6 class="text-muted text-uppercase small fw-bold">Trạng thái</h6>
+                    <span class="badge fs-6 {{ 'bg-success' if project['status'] == 'approved' else 'bg-warning' }}">
+                        {{ project['status'] }}
+                    </span>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th class="bg-light" style="width: 30%;">Giảng viên hướng dẫn</th>
+                            <td class="text-danger fw-bold fs-5">{{ project['lecturer_name'] }}</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Loại hình đăng ký</th>
+                            <td>{{ project['course_type_name'] }}</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Thời gian đăng ký</th>
+                            <td>{{ project['registered_at'] }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between">
+                <a href="{{ url_for('myprojects.my_projects') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+                <button onclick="window.print()" class="btn btn-outline-dark">
+                    <i class="fas fa-print"></i> In phiếu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

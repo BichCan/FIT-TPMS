@@ -5,13 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="86a4e906-3229-4966-884e-969ceedbba56" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/FIT-TPMS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/FIT-TPMS.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/myprojects/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/myprojects/routes.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/myprojects.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/project_detail.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/thesis/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/thesis/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/theses.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/theses.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/thesis_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/thesis_detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +37,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/BichCan/FIT-TPMS.git&quot;,
-    &quot;accountId&quot;: &quot;3c1310d7-2533-4ffb-9398-588f7cf4e24c&quot;
+    &quot;accountId&quot;: &quot;3bfdcf5e-fa28-44ea-af7c-c6c152fcf12a&quot;
   }
 }</component>
   <component name="McpProjectServerCommands">
@@ -57,12 +56,13 @@
   "keyToString": {
     "DefaultHtmlFileTemplate": "HTML File",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.routes.executor": "Run",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "linhcute",
+    "git-widget-placeholder": "linh",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "to.speed.mode.migration.done": "true"
@@ -84,5 +84,15 @@
       <updated>1775042647043</updated>
     </task>
     <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app/__init__.py</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
