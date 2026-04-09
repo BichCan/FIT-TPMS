@@ -4,33 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="86a4e906-3229-4966-884e-969ceedbba56" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/login/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/login/routes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/registration/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/registration/routes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/inspect_db.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/inspect_db_v2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/registration.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/registrationform.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/submission.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/FIT-TPMS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/FIT-TPMS.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FIT-TPMS.db" beforeDir="false" afterPath="$PROJECT_DIR$/FIT-TPMS.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FIT-TPMS.sqbpro" beforeDir="false" afterPath="$PROJECT_DIR$/FIT-TPMS.sqbpro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/myprojects/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/myprojects/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/thesis/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/thesis/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/thesis/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/thesis/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/theses.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/myprojects.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/myprojects.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/project_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/project_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/theses.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/theses.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/thesis_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/thesis_detail.html" afterDir="false" />
-    </list>
+    <list default="true" id="86a4e906-3229-4966-884e-969ceedbba56" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -80,7 +54,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "Merging linh",
+    "git-widget-placeholder": "linh",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "to.speed.mode.migration.done": "true"
