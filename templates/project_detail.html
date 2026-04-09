@@ -1,54 +1,254 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-4">
-    <div class="card shadow border-0">
-        <div class="card-header bg-primary text-white py-3">
-            <h5 class="mb-0 fw-bold">CHI TIẾT ĐĂNG KÝ HỌC PHẦN</h5>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+    :root {
+        --primary-navy: #1a237e;
+        --accent-blue: #3f51b5;
+        --bg-body: #f8faff;
+        --text-main: #2d3748;
+        --text-light: #718096;
+        --success: #28a745;
+        --danger: #dc3545;
+        --announcement-bg: #eff2ff;
+    }
+
+    body {
+        background-color: var(--bg-body);
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        color: var(--text-main);
+        line-height: 1.6;
+    }
+
+    .main-container { max-width: 1000px; margin: auto; padding: 50px 20px; }
+
+    /* Header Section */
+    .course-id-label { color: #5c6bc0; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    .page-title { color: #2d3748; font-weight: 800; font-size: 32px; margin-top: 5px; margin-bottom: 40px; }
+
+    /* Top Grid: Announcement & Progress */
+    .top-grid { display: grid; grid-template-columns: 1.8fr 1fr; gap: 24px; margin-bottom: 40px; }
+
+    .announcement-card {
+        background: var(--announcement-bg); border-radius: 20px; padding: 30px; position: relative;
+    }
+    .announcement-header { font-weight: 700; color: var(--primary-navy); margin-bottom: 20px; display: flex; align-items: center; font-size: 15px; }
+
+    .announcement-content {
+        background: white; border-radius: 15px; padding: 25px;
+        border-left: 5px solid var(--primary-navy); box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+    .announcement-title { font-weight: 700; font-size: 17px; margin-bottom: 10px; color: #1a237e; }
+
+    .btn-view-all {
+        position: absolute; bottom: 25px; right: 30px; color: var(--primary-navy);
+        font-weight: 700; font-size: 13px; text-decoration: none; transition: 0.3s;
+    }
+    .btn-view-all:hover { transform: translateX(5px); }
+
+    .profile-card {
+        background: white; border-radius: 20px; padding: 30px; text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+    .avatar-circle {
+        width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 20px;
+        background: #f0f2f5; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.08); overflow: hidden;
+    }
+
+    /* Topic Info Card */
+    .topic-card { background: white; border-radius: 24px; padding: 40px; margin-bottom: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+    .topic-header { font-weight: 800; font-size: 18px; margin-bottom: 30px; display: flex; align-items: center; }
+    .topic-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 50px; }
+
+    .label-caps { font-size: 11px; font-weight: 800; color: #a0aec0; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 15px; display: block; }
+    .topic-title-box { font-size: 21px; font-weight: 700; color: #1a237e; border-bottom: 2px solid #f0f4ff; padding-bottom: 15px; margin-bottom: 25px; }
+
+    .supervisor-tag { background: #f4f6ff; padding: 15px; border-radius: 12px; display: inline-block; width: 100%; }
+
+    .btn-outline-pill {
+        border: 2px solid #e2e8f0; color: var(--primary-navy); background: transparent;
+        border-radius: 50px; padding: 10px 30px; font-weight: 700; font-size: 14px;
+        transition: 0.3s; margin-top: 20px;
+    }
+    .btn-outline-pill:hover { border-color: var(--primary-navy); background: var(--primary-navy); color: white; }
+
+    /* Assignment Items */
+    .section-subtitle { font-weight: 800; font-size: 20px; margin-bottom: 25px; display: flex; align-items: center; }
+
+    .assignment-item {
+        background: white; border-radius: 18px; padding: 25px 35px; margin-bottom: 20px;
+        display: flex; align-items: center; justify-content: space-between;
+        border: 1px solid #f0f2f5; transition: all 0.3s ease;
+    }
+    .assignment-item:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+
+    .assignment-item.completed { border-left: 6px solid var(--success); }
+    .assignment-item.overdue { border-left: 6px solid var(--danger); }
+
+    .icon-box {
+        width: 50px; height: 50px; border-radius: 14px; display: flex;
+        align-items: center; justify-content: center; margin-right: 25px; font-size: 22px;
+    }
+    .icon-completed { background: #e6f6ec; color: var(--success); }
+    .icon-pending { background: #eff2ff; color: var(--primary-navy); }
+
+    .status-pill { padding: 6px 20px; border-radius: 30px; font-size: 12px; font-weight: 700; }
+    .pill-green { background: #e6f6ec; color: var(--success); }
+
+    .btn-navy-pill {
+        background: var(--primary-navy); color: white; border: none;
+        border-radius: 12px; padding: 12px 35px; font-weight: 700; transition: 0.3s;
+    }
+    .btn-navy-pill:hover { background: #0d1440; box-shadow: 0 8px 20px rgba(26,35,126,0.2); }
+</style>
+
+<div class="main-container">
+    <div class="mb-5">
+        <div class="course-id-label">COURSE ID: {{ class_info.class_code }} </div>
+        <h1 class="page-title">Chi tiết Lớp học: {{ class_info.class_name }} </h1>
+    </div>
+
+    <div class="top-grid">
+        <div class="announcement-card">
+            <div class="announcement-header"><i class="fas fa-bullhorn me-3"></i> Thông báo từ Giảng viên</div>
+            {% if latest_notification %}
+            <div class="announcement-content">
+                <div class="announcement-title">{{ latest_notification.title }}</div>
+                <small class="text-muted">
+                    <i class="fas fa-user-tie me-2"></i>{{ class_info.lecturer_name }}  &nbsp;•&nbsp;
+                    <i class="far fa-clock ms-2 me-1"></i>{{ latest_notification.created_at }}
+                </small>
+            </div>
+            {% endif %}
+            <a href="#" class="btn-view-all mb-10">Xem tất cả thông báo <i class="fas fa-arrow-right ms-3"></i></a>
         </div>
-        <div class="card-body">
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <h6 class="text-muted text-uppercase small fw-bold">Thông tin sinh viên</h6>
-                    <p class="mb-1"><strong>Mã SV:</strong> {{ project['student_code'] }}</p>
-                    <p><strong>Họ tên:</strong> {{ project['student_name'] }}</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <h6 class="text-muted text-uppercase small fw-bold">Trạng thái</h6>
-                    <span class="badge fs-6 {{ 'bg-success' if project['status'] == 'approved' else 'bg-warning' }}">
-                        {{ project['status'] }}
-                    </span>
+
+        <div class="profile-card">
+            <div class="avatar-circle">
+                <img src="https://ui-avatars.com/api/?name={{ session.user_full_name }}&background=EBF4FF&color=1A237E" style="width:100%">
+            </div>
+            <h5 class="fw-bold mb-1">{{ session.user_full_name }}</h5>
+            <small class="text-muted d-block mb-3">Student ID: {{ class_info.student_code }}</small>
+
+            <div class="progress-label d-flex justify-content-between mb-2">
+                <span class="fw-bold small">Tiến độ thực hiện</span>
+                <span class="fw-bold small">{{ progress }}%</span>
+            </div>
+            <div class="progress" style="height: 8px; border-radius: 10px;">
+                <div class="progress-bar" style="width: {{ progress }}%; background: var(--primary-navy);"></div>
+            </div>
+        </div>
+    </div>
+
+<div class="topic-card">
+    <div class="topic-header">
+        <i class="fas fa-file-alt me-3 text-primary"></i> Thông tin Đề tài
+    </div>
+
+    <div class="topic-grid">
+        <div>
+            <span class="label-caps">Tên đề tài</span>
+            <div class="topic-title-box">
+                {{ topic.title if topic else "Chưa đăng ký đề tài" }}
+            </div>
+            <div class="supervisor-tag">
+                <span class="label-caps" style="margin-bottom: 5px; font-size: 9px;">Giảng viên hướng dẫn</span>
+                <div class="fw-bold text-primary">
+                    {{ class_info.lecturer_name }}
                 </div>
             </div>
+        </div>
 
-            <hr>
+        <div>
+            <span class="label-caps">Mô tả tóm tắt</span>
+            <p class="text-muted small" style="text-align: justify;">
+                {{ topic.description if topic else "Vui lòng cập nhật mô tả..." }}
+            </p>
+        </div>
+    </div>
 
-            <div class="row mt-4">
-                <div class="col-md-12">
-                    <table class="table table-bordered">
-                        <tr>
-                            <th class="bg-light" style="width: 30%;">Giảng viên hướng dẫn</th>
-                            <td class="text-danger fw-bold fs-5">{{ project['lecturer_name'] }}</td>
-                        </tr>
-                        <tr>
-                            <th class="bg-light">Loại hình đăng ký</th>
-                            <td>{{ project['course_type_name'] }}</td>
-                        </tr>
-                        <tr>
-                            <th class="bg-light">Thời gian đăng ký</th>
-                            <td>{{ project['registered_at'] }}</td>
-                        </tr>
-                    </table>
-                </div>
+    <div class="text-end mt-4">
+    <button class="btn-outline-pill" data-bs-toggle="modal" data-bs-target="#topicModal">
+        Cập nhật thông tin
+    </button>
+</div>
+</div>
+    <div class="section-subtitle"><i class="fas fa-check-double me-3 text-primary"></i> Danh sách Assignment</div>
+
+    {% for ass in assignments %}
+    <div class="assignment-item {% if ass.submitted_at %}completed{% elif ass.is_late %}overdue{% endif %}">
+        <div class="d-flex align-items-center">
+            <div class="icon-box {% if ass.submitted_at %}icon-completed{% else %}icon-pending{% endif %}">
+                <i class="fas {% if ass.submitted_at %}fa-check{% else %}fa-file-alt{% endif %}"></i>
             </div>
-
-            <div class="mt-4 d-flex justify-content-between">
-                <a href="{{ url_for('myprojects.my_projects') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Quay lại
+            <div>
+                <h6 class="fw-bold mb-1">{{ ass.title }} </h6>
+                <p class="text-muted small mb-2">{{ ass.description | truncate(100) }} </p>
+                {% if ass.submitted_at %}
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-light text-dark px-3 py-1 fw-bold" style="font-size: 10px; border-radius: 5px;">Graded: {{ ass.grade if ass.grade else 'N/A' }}/10 </span>
+                    <small class="ms-3 text-muted"><i class="far fa-calendar-alt me-1"></i> {{ ass.submitted_at }} </small>
+                </div>
+                {% else %}
+                <small class="text-danger fw-bold"><i class="fas fa-clock me-1"></i> Deadline: {{ ass.deadline }} </small>
+                {% endif %}
+            </div>
+        </div>
+    <div class="text-end ms-4">
+            {% if ass.submitted_at %}
+                <div class="d-flex flex-column align-items-end">
+                    <span class="status-pill pill-green mb-2">Hoàn thành</span>
+                    <a href="{{ url_for('myprojects.submit_assignment', assignment_id=ass.id) }}" class="text-decoration-none small fw-bold" style="color: var(--primary-navy);">
+                        Xem chi tiết <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            {% elif ass.is_late %}
+                <div class="text-danger fw-bold small mb-2">Quá hạn </div>
+                <a href="#" class="text-danger small text-decoration-none fw-bold">Yêu cầu gia hạn</a>
+            {% else %}
+                <a href="{{ url_for('myprojects.submit_assignment', assignment_id=ass.id) }}" class="btn-navy-pill text-decoration-none d-inline-block">
+                    Nộp bài
                 </a>
-                <button onclick="window.print()" class="btn btn-outline-dark">
-                    <i class="fas fa-print"></i> In phiếu
-                </button>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="modal fade" id="topicModal" tabindex="-1" aria-labelledby="topicModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"> <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+
+            <div class="modal-header border-0 pb-0 mt-3 px-4">
+                <h5 class="modal-title fw-bold" id="topicModalLabel" style="color: var(--primary-navy);">Cập nhật đề tài</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
+            <form action="{{ url_for('myprojects.update_topic', class_id=class_info.id) }}" method="POST">
+                <div class="modal-body px-4 py-4">
+
+                    <div class="mb-4">
+                        <label class="label-caps mb-2" style="color: var(--text-light); font-size: 11px; font-weight: 700;">TÊN ĐỀ TÀI</label>
+                        <input type="text" name="title" class="form-control"
+                               value="{{ topic.title if topic else '' }}"
+                               placeholder="Nhập tên đề tài..." required
+                               style="border-radius: 8px; padding: 12px; border: 1px solid #ced4da;">
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="label-caps mb-2" style="color: var(--text-light); font-size: 11px; font-weight: 700;">MÔ TẢ TÓM TẮT</label>
+                        <textarea name="description" class="form-control" rows="5"
+                                  placeholder="Nhập mô tả chi tiết..." required
+                                  style="border-radius: 8px; padding: 12px; border: 1px solid #ced4da;">{{ topic.description if topic else '' }}</textarea>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer border-0 pt-0 pb-4 px-4 justify-content-start">
+                    <button type="button" class="btn btn-light rounded-pill px-4 me-2" data-bs-dismiss="modal" style="font-weight: 600;">Hủy</button>
+                    <button type="submit" class="btn-navy-pill m-0">Lưu thay đổi</button>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
