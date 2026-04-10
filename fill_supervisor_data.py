@@ -59,7 +59,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 4,
-        "photo_url": "/static/images/lecturers/huong.png",
+        "photo_url": "/static/images/lecturers/thao.jpg",
         "position": "Thạc sĩ, Giảng viên",
         "specialization": "Công nghệ phần mềm",
         "bio": "Chuyên gia về kỹ thuật phần mềm và phát triển ứng dụng web hiện đại.",
@@ -69,7 +69,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 5,
-        "photo_url": "/static/images/lecturers/thao.jpg",
+        "photo_url": "/static/images/lecturers/tam.jpg",
         "position": "Tiến sĩ, Giảng viên",
         "specialization": "Mạng máy tính & Truyền thông",
         "bio": "Chuyên gia về hệ thống mạng, bảo mật và các công nghệ truyền thông hiện đại.",
@@ -79,7 +79,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 6,
-        "photo_url": "/static/images/lecturers/tam.jpg",
+        "photo_url": "/static/images/lecturers/thien.jpg",
         "position": "Tiến sĩ, Giảng viên",
         "specialization": "Khoa học máy tính",
         "bio": "Nghiên cứu và giảng dạy các lĩnh vực cốt lõi của khoa học máy tính.",
@@ -89,7 +89,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 7,
-        "photo_url": "/static/images/lecturers/tong_thi_hao_tam.jpg",
+        "photo_url": "/static/images/lecturers/viet.jpg",
         "position": "Tiến sĩ, Giảng viên",
         "specialization": "Hệ thống thông tin",
         "bio": "Chuyên gia về hệ thống thông tin doanh nghiệp và quản trị dữ liệu.",
@@ -99,7 +99,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 8,
-        "photo_url": "/static/images/lecturers/tong_thi_minh_ngoc.jpg",
+        "photo_url": "/static/images/lecturers/thang.png",
         "position": "Thạc sĩ, Giảng viên",
         "specialization": "Công nghệ phần mềm",
         "bio": "Chuyên về kiểm thử phần mềm, đảm bảo chất lượng và phát triển phần mềm agile.",
@@ -109,7 +109,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 9,
-        "photo_url": "/static/images/lecturers/tran_thi_my_diep.jpg",
+        "photo_url": "/static/images/lecturers/diep.jpg",
         "position": "Thạc sĩ, Giảng viên",
         "specialization": "Khoa học dữ liệu",
         "bio": "Nghiên cứu về phân tích dữ liệu lớn, học máy và khai phá dữ liệu.",
@@ -119,7 +119,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 10,
-        "photo_url": "/static/images/lecturers/dang_minh_quan.jpg",
+        "photo_url": "/static/images/lecturers/quan.jpg",
         "position": "Tiến sĩ, Giảng viên",
         "specialization": "Khoa học máy tính",
         "bio": "Nghiên cứu chuyên sâu về thuật toán, lý thuyết tính toán và trí tuệ nhân tạo.",
@@ -129,7 +129,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 11,
-        "photo_url": "/static/images/lecturers/luu_minh_tuan.jpg",
+        "photo_url": "/static/images/lecturers/tuan.jpg",
         "position": "Tiến sĩ, Giảng viên",
         "specialization": "Mạng máy tính",
         "bio": "Chuyên gia về mạng không dây, Internet vạn vật (IoT) và bảo mật mạng.",
@@ -139,7 +139,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 12,
-        "photo_url": "/static/images/lecturers/pham_xuan_lam.jpg",
+        "photo_url": "/static/images/lecturers/kien.jpg",
         "position": "Tiến sĩ, Giảng viên",
         "specialization": "Hệ thống thông tin",
         "bio": "Nghiên cứu về hệ thống phân tán, điện toán đám mây và kiến trúc phần mềm.",
@@ -149,7 +149,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 13,
-        "photo_url": "/static/images/lecturers/cao_thi_thu_huong.jpg",
+        "photo_url": "/static/images/lecturers/huong.png",
         "position": "Thạc sĩ, Giảng viên",
         "specialization": "Công nghệ phần mềm",
         "bio": "Chuyên về lập trình hướng đối tượng, thiết kế phần mềm và các công nghệ web.",
@@ -159,7 +159,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 14,
-        "photo_url": "/static/images/lecturers/nguyen_thanh_huong.jpg",
+        "photo_url": "/static/images/lecturers/thuong.jpg",
         "position": "Tiến sĩ, Giảng viên",
         "specialization": "Khoa học dữ liệu",
         "bio": "Nghiên cứu về học máy, xử lý ngôn ngữ tự nhiên và phân tích dữ liệu.",
@@ -169,7 +169,7 @@ SUPERVISOR_DATA = [
     },
     {
         "id": 15,
-        "photo_url": "/static/images/lecturers/pham_minh_hoan.jpg",
+        "photo_url": "/static/images/lecturers/hoan.jpg",
         "position": "Tiến sĩ, Giảng viên",
         "specialization": "Khoa học máy tính",
         "bio": "Chuyên gia về mật mã học, bảo mật thông tin và an toàn hệ thống.",
