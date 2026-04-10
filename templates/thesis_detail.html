@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="container detail-page">
-    <a href="/theses" class="back">← Quay lại</a>
+    <a href="/theses-projects" class="back">← Quay lại</a>
 
     <div class="detail-layout">
         <!-- LEFT -->
@@ -41,9 +41,12 @@
                     <i class="fa-solid fa-code"></i> Source code
                 </a>
 
-                <a href="{{ t['file_url'] or '#' }}" class="btn">
-                    <i class="fa-solid fa-download"></i> Tải PDF
-                </a>
+                <a href="{{ t['file_url'] if t['file_url'] else '#' }}"
+   class="btn"
+   download="{{ t['file_url'].split('/')[-1] if t['file_url'] else '' }}"
+   {% if not t['file_url'] %} onclick="return false;" {% endif %}>
+    <i class="fa-solid fa-download"></i> Tải PDF
+</a>
             </div>
         </div>
 

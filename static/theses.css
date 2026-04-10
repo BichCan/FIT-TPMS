@@ -95,9 +95,9 @@ select {
 /* ===== GRID ===== */
 .list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
-
+    align-items: stretch;
     align-items: start;
     /* ⭐ fix card dính */
 }
@@ -112,7 +112,8 @@ select {
 
     display: flex;
     flex-direction: column;
-    min-height: 240px;
+    min-height: 300px;
+    overflow: hidden;
 }
 
 /* ===== YEAR ===== */
@@ -145,13 +146,18 @@ select {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-overflow: ellipsis;
+    height: 2.8em; /* Cố định chiều cao vùng tiêu đề (1.4 x 2 dòng) */
 }
 
 /* ===== LECTURER ===== */
 .lecturer {
-    font-size: 14px;
-    color: #777;
-    margin-bottom: 10px;
+   font-size: 14px;
+    color: #555;
+    margin-bottom: 4px;
+    white-space: nowrap;      /* Không cho xuống dòng */
+    overflow: hidden;         /* Ẩn nếu tên quá dài */
+    text-overflow: ellipsis;
 }
 
 /* ===== ACTION ICON ===== */
@@ -160,6 +166,7 @@ select {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-top: 15px;
 }
 
 /* ICON */
@@ -363,4 +370,119 @@ select {
     margin: 20px 0 10px;
     color: #00288E;
     font-size: 16px;
+}
+/* Container chứa các nút của giảng viên */
+.admin-controls {
+    display: flex;
+    gap: 8px; /* Khoảng cách giữa các nút */
+    width: 100%;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 15px;
+}
+
+/* Nút Cập nhật */
+.btn-update {
+    flex: 1; /* Chiếm diện tích lớn nhất */
+    background-color: #1a237e;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    height: 40px;
+}
+
+/* Nút Xóa */
+.delete-form {
+   height: 40px; /* Cố định chiều cao nút để đều nhau */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete {
+    width: 100%;
+    background-color: white;
+    color: #555;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    height: 40px;
+}
+
+/* Nút Chi tiết (bản nhỏ) */
+.btn-detail-small {
+    flex: 1;
+    background-color: #f0f2f5;
+    color: #444;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+}
+
+/* Hover effects */
+.btn-update:hover { background-color: #000051; }
+.btn-delete:hover { background-color: #fff1f0; color: #f5222d; border-color: #ffa39e; }
+.btn-detail-small:hover { background-color: #e4e6e9; }
+/* Container chứa 3 nút */
+.student-controls {
+    display: flex;
+    align-items: center;    /* Căn giữa theo chiều dọc */
+    justify-content: flex-start; /* Căn trái hoặc space-between tùy ý */
+    gap: 15px;              /* Khoảng cách giữa các nút */
+    margin-top: auto;       /* Đẩy xuống đáy card */
+    width: 100%;
+}
+
+/* Định dạng chung cho tất cả các nút để bằng chiều cao nhau */
+.student-controls .link,
+.student-controls .detail-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;           /* Cố định chiều cao cho tất cả các nút */
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+/* CSS riêng cho Source và PDF (dạng text + icon) */
+.student-controls .link {
+    color: #1A3D99;
+    gap: 6px;               /* Khoảng cách icon và chữ */
+}
+
+.student-controls .link:hover {
+    opacity: 0.8;
+}
+
+/* CSS riêng cho nút Xem chi tiết (dạng nút khối) */
+.student-controls .detail-btn {
+    background: #1A3D99;
+    color: white;
+    padding: 0 16px;        /* Khoảng cách bên trong nút */
+    border-radius: 8px;     /* Bo góc */
+    margin-left: auto;      /* Đẩy nút này về phía bên phải nếu muốn */
+}
+
+.student-controls .detail-btn:hover {
+    background: #102663;
 }
