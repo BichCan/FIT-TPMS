@@ -30,6 +30,9 @@ def login():
             if user['role'] == 'student':
                 db.close()
                 return redirect(url_for('registration.registration'))
+            elif user['role'] == 'lecturer':
+                db.close()
+                return redirect(url_for('registrationsmanagement.registrations_management'))
             else:
                 flash(f"Đăng nhập thành công với vai trò {user['role']}")
                 db.close()

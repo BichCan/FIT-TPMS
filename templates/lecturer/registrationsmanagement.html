@@ -1,0 +1,367 @@
+{% extends "lecturer/base.html" %}
+
+{% block title %}Danh sách Sinh viên Đăng ký{% endblock %}
+
+{% block styles %}
+<style>
+    :root {
+        --primary-blue: #002D8E;
+        --light-blue: #E7EDFF;
+        --status-pending: #FBBF24;
+        --status-success: #10B981;
+        --status-draft: #9CA3AF;
+        --bg-card: #FFFFFF;
+        --text-main: #1F2937;
+        --text-secondary: #6B7280;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .management-header {
+        margin-bottom: 32px;
+    }
+
+    .management-header h2 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: var(--text-main);
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+    }
+
+    .management-header p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        max-width: 700px;
+        line-height: 1.6;
+    }
+
+    /* CONTROL PANEL */
+    .control-panel {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-tabs {
+        display: flex;
+        background: #F3F4F6;
+        padding: 6px;
+        border-radius: 12px;
+        gap: 4px;
+    }
+
+    .filter-tab {
+        padding: 8px 24px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        background: transparent;
+        text-decoration: none;
+    }
+
+    .filter-tab:hover {
+        color: var(--primary-blue);
+    }
+
+    .filter-tab.active {
+        background: var(--white);
+        color: var(--primary-blue);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-wrapper {
+        position: relative;
+        flex: 1;
+        max-width: 400px;
+    }
+
+    .search-wrapper i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 16px 12px 48px;
+        border-radius: 12px;
+        border: 1px solid #E5E7EB;
+        background: #F9FAFB;
+        font-size: 0.95rem;
+        outline: none;
+        transition: var(--transition);
+    }
+
+    .search-input:focus {
+        background: var(--white);
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 4px rgba(0, 45, 142, 0.05);
+    }
+
+    /* REGISTRATION CARDS */
+    .registrations-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .reg-card {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #F3F4F6;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .reg-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: var(--light-blue);
+    }
+
+    .student-info-box {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .student-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        background: #F3F4F6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--primary-blue);
+        overflow: hidden;
+    }
+
+    .student-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .details h4 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 4px;
+    }
+
+    .mssv {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--primary-blue);
+        background: var(--light-blue);
+        padding: 2px 8px;
+        border-radius: 6px;
+        margin-bottom: 12px;
+        display: inline-block;
+    }
+
+    .meta-data {
+        display: flex;
+        gap: 32px;
+    }
+
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meta-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #9CA3AF;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .meta-value {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-main);
+    }
+
+    /* ACTIONS & BADGES */
+    .card-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .course-badge {
+        position: absolute;
+        top: 20px;
+        right: 24px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .badge-project {
+        background: #EEF2FF;
+        color: #6366F1;
+    }
+
+    .badge-thesis {
+        background: #FDF2F8;
+        color: #EC4899;
+    }
+
+    .add-btn {
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 4px 10px rgba(0, 45, 142, 0.2);
+    }
+
+    .add-btn:hover {
+        background: #001f66;
+        transform: scale(1.02);
+        box-shadow: 0 6px 15px rgba(0, 45, 142, 0.3);
+    }
+
+    .load-more {
+        margin-top: 40px;
+        text-align: center;
+    }
+
+    .load-more-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .load-more-btn:hover {
+        color: var(--primary-blue);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="management-container">
+    <header class="management-header">
+        <h2>Danh sách Sinh viên Đăng ký</h2>
+        <p>Xem và quản lý các lượt đăng ký giảng viên hướng dẫn của sinh viên cho đề án và khóa luận. Lựa chọn sinh viên phù hợp để đưa vào các lớp học hiện có.</p>
+    </header>
+
+    <div class="control-panel">
+        <div class="filter-tabs" id="filterTabs">
+            <a href="{{ url_for('registrationsmanagement.registrations_management', type='all') }}" 
+               class="filter-tab {% if current_filter == 'all' %}active{% endif %}">Tất cả</a>
+            <a href="{{ url_for('registrationsmanagement.registrations_management', type='project') }}" 
+               class="filter-tab {% if current_filter == 'project' %}active{% endif %}">Đề án</a>
+            <a href="{{ url_for('registrationsmanagement.registrations_management', type='thesis') }}" 
+               class="filter-tab {% if current_filter == 'thesis' %}active{% endif %}">Khóa luận</a>
+        </div>
+
+        <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input" id="searchStudent" placeholder="Tìm kiếm theo tên hoặc MSSV..." oninput="handleSearch()">
+        </div>
+    </div>
+
+    <div class="registrations-list" id="registrationsList">
+        {% for reg in registrations %}
+        <div class="reg-card" data-name="{{ reg.student_name | lower }}" data-mssv="{{ reg.student_code }}">
+            <div class="course-badge {% if reg.course_type_id == 1 %}badge-project{% else %}badge-thesis{% endif %}">
+                {{ reg.type_name }}
+            </div>
+            <div class="student-info-box">
+                <div class="student-avatar">
+                    <img src="https://ui-avatars.com/api/?name={{ reg.student_name | urlencode }}&background=002D8E&color=fff&bold=true&rounded=true" 
+                         alt="{{ reg.student_name }}">
+                </div>
+                <div class="details">
+                    <h4>{{ reg.student_name }}</h4>
+                    <span class="mssv">MSSV: {{ reg.student_code }}</span>
+                    <div class="meta-data">
+                        <div class="meta-item">
+                            <span class="meta-label">Ngày đăng ký</span>
+                            <span class="meta-value">{{ reg.registered_at }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Trạng thái</span>
+                            <span class="meta-value text-capitalize">{{ reg.status }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="add-btn" onclick="addToClass({{ reg.id }})">
+                    <i class="fa-solid fa-plus"></i> Thêm vào lớp
+                </button>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">Không tìm thấy yêu cầu đăng ký nào phù hợp.</div>
+        {% endfor %}
+    </div>
+
+    <div class="load-more">
+        <button class="load-more-btn">
+            Xem thêm hồ sơ <i class="fa-solid fa-chevron-down"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    function handleSearch() {
+        const searchVal = document.getElementById('searchStudent').value.toLowerCase();
+        const cards = document.querySelectorAll('.reg-card');
+        
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name');
+            const mssv = card.getAttribute('data-mssv');
+            if (name.includes(searchVal) || mssv.includes(searchVal)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    function addToClass(id) {
+        // Logic will be implemented in future phase
+        alert(`Nghiệp vụ thêm sinh viên (ID: ${id}) vào lớp sẽ được thực hiện ở giai đoạn tiếp theo.`);
+    }
+</script>
+{% endblock %}

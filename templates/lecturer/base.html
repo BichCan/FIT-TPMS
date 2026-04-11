@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Scholaris Pro{% endblock %} | FIT-TPMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% block styles %}{% endblock %}
+    <style>
+        :root {
+            --primary-color: #002D8E;
+            --primary-light: #E7EDFF;
+            --bg-page: #FBFBFF;
+            --white: #FFFFFF;
+            --text-dark: #1F2937;
+            --text-muted: #6B7280;
+            --border-color: #E5E7EB;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        .header {
+            height: var(--header-height);
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+            margin: 0;
+            margin-top: 4px;
+            margin-bottom: 2px;
+        }
+
+        .logo-text span {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+            margin: 0 40px;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 16px 12px 48px;
+            background: #F3F4F6;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            background: var(--white);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 45, 142, 0.05);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .action-icon {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-icon:hover {
+            color: var(--primary-color);
+        }
+
+        /* Tùy chỉnh Dropdown Avatar */
+        .user-dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-left: 20px;
+            border-left: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-dropdown-toggle::after {
+            content: '\f0d7';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .user-dropdown-toggle[aria-expanded="true"]::after {
+            transform: rotate(180deg);
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            object-fit: cover;
+        }
+
+        .dropdown-menu {
+            box-shadow: var(--shadow) !important;
+            padding: 8px !important;
+        }
+
+        .dropdown-item {
+            border-radius: 8px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+
+        .dropdown-item.text-danger:hover {
+            background-color: #FEE2E2;
+            color: #DC2626 !important;
+        }
+
+        /* LAYOUT WRAPPER */
+        .layout-wrapper {
+            display: flex;
+            flex: 1;
+            margin-top: var(--header-height);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--white);
+            border-right: 1px solid var(--border-color);
+            padding: 40px 20px;
+            position: fixed;
+            top: var(--header-height);
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 20px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+            background: var(--primary-light);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color);
+            background: var(--primary-light);
+            font-weight: 600;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-area {
+            flex: 1;
+            min-height: 500px;
+            background: transparent;
+            display: block;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 60px;
+            padding: 60px 0 40px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-col h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 24px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-link {
+            margin-bottom: 12px;
+        }
+
+        .footer-link a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .footer-link a:hover {
+            color: var(--primary-color);
+        }
+
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #F3F4F6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+                padding: 40px 0;
+                overflow: visible;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-menu {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-item {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 0;
+                width: 56px;
+                height: 56px;
+                border-radius: 14px;
+                position: relative;
+            }
+
+            .nav-link i {
+                width: auto;
+                font-size: 1.25rem;
+                margin: 0;
+            }
+
+            .nav-link span {
+                display: none;
+                position: absolute;
+                left: calc(100% + 14px);
+                top: 50%;
+                transform: translateY(-50%);
+                background: var(--text-dark);
+                color: var(--white);
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+                margin: 0;
+                z-index: 1000;
+                box-shadow: var(--shadow);
+            }
+
+            .nav-link span::before {
+                content: '';
+                position: absolute;
+                right: 100%;
+                top: 50%;
+                transform: translateY(-50%);
+                border: 5px solid transparent;
+                border-right-color: var(--text-dark);
+            }
+
+            .nav-link:hover span {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+
+            .header {
+                padding: 0 20px;
+            }
+
+            .search-bar {
+                margin: 0 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .search-bar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo-section">
+            <div class="logo-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div class="logo-text">
+                <h1>Đề án/Khóa luận FIT</h1>
+                <span>Khoa Công nghệ thông tin</span>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <i class="fa-regular fa-bell action-icon"></i>
+            <i class="fa-regular fa-circle-question action-icon"></i>
+
+            <div class="dropdown">
+                <div class="user-dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    {% if session.get('user_id') %}
+                    <div class="avatar">
+                        {{ session.get('username')[:2].upper() if session.get('username') else 'GV' }}
+                    </div>
+                    {% else %}
+                    <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                    {% endif %}
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3" aria-labelledby="userDropdown"
+                    style="border-radius: 12px; min-width: 220px;">
+                    {% if session.get('user_id') %}
+                    <li class="px-3 py-2 mb-2 border-bottom">
+                        <span class="d-block fw-bold text-dark">{{ session.get('username') }}</span>
+                        <small class="text-muted">
+                            {% if session.get('role') == 'lecturer' %}
+                            Tài khoản Giảng viên
+                            {% else %}
+                            Tài khoản Sinh viên
+                            {% endif %}
+                        </small>
+                    </li>
+                    <li><a class="dropdown-item py-2 text-danger" href="{{ url_for('login.logout') }}"><i
+                                class="fa-solid fa-right-from-bracket me-2"></i>Đăng xuất</a></li>
+                    {% else %}
+                    <li><a class="dropdown-item py-2 mb-1" href="{{ url_for('login.login') }}"><i
+                                class="fa-solid fa-right-to-bracket me-2"></i>Đăng nhập</a></li>
+                    <li><a class="dropdown-item py-2" href="{{ url_for('login.login') }}"><i
+                                class="fa-solid fa-user-plus me-2"></i>Đăng ký</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout-wrapper">
+        <aside class="sidebar">
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Trang chủ</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/lecturer/theses-projects" class="nav-link {% if 'theses' in request.path %}active{% endif %}">
+                        <i class="fa-solid fa-book-bookmark"></i>
+                        <span>Báo cáo</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/lecturer/classes" class="nav-link {% if 'classes' in request.path %}active{% endif %}">
+                        <i class="fa-solid fa-user-group"></i>
+                        <span>Lớp học</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/lecturer/registrations"
+                        class="nav-link {% if 'registrations' in request.path %}active{% endif %}">
+                        <i class="fa-solid fa-diagram-project"></i>
+                        <span>Quản lý sinh viên đăng kí</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+
+            <div class="container-fluid px-0">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm"
+                    role="alert" style="border-radius: 12px; margin-bottom: 20px;">
+                    {% if category == 'success' %}
+                    <i class="fas fa-check-circle me-2"></i>
+                    {% elif category == 'danger' or category == 'error' %}
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {% elif category == 'warning' %}
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    {% else %}
+                    <i class="fas fa-info-circle me-2"></i>
+                    {% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <div class="content-area">
+                {% block content %}
+                {% endblock %}
+            </div>
+
+            <footer class="footer">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h4>Thông tin</h4>
+                        <ul class="footer-links">
+                            <li class="footer-link"><a href="#">Về chúng tôi</a></li>
+                            <li class="footer-link"><a href="#">Chính sách học tập</a></li>
+                            <li class="footer-link"><a href="#">Hướng dẫn</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Liên hệ</h4>
+                        <div class="contact-info">
+                            <i class="fa-regular fa-envelope"></i>
+                            fit@neu.edu.vn
+                        </div>
+                        <div class="contact-info">
+                            <i class="fa-solid fa-phone"></i>
+                            +84 123 456 789
+                        </div>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Mạng xã hội</h4>
+                        <div class="social-icons">
+                            <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
+                            <a href="#" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                            <a href="#" class="social-icon"><i class="fa-solid fa-globe"></i></a>
+                            <a href="#" class="social-icon"><i class="fa-solid fa-share-nodes"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="copyright">
+                    &copy; 2024 Scholaris Pro. All rights reserved.
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
