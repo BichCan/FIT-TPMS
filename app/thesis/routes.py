@@ -1,4 +1,7 @@
-from flask import render_template, request
+import os
+import sqlite3
+from flask import render_template, request, redirect, url_for, flash, abort, session
+from werkzeug.utils import secure_filename
 from app.database import get_db
 from app.thesis import thesis_bp
 
@@ -120,3 +123,125 @@ def thesis_detail(topic_id):
     conn.close()
 
     return render_template("thesis_detail.html", t=thesis)
+# 1. Route Xóa đề tài
+@thesis_bp.route("/theses/delete/<int:topic_id>", methods=["POST"])
+def delete_thesis(topic_id):
+    # Giả sử bạn đã có logic kiểm tra Admin ở đây (ví dụ dùng @admin_required)
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM topics WHERE id = ?", (topic_id,))
+        conn.commit()
+        # Lưu ý: Nếu có file PDF/Source code trên server, bạn nên xóa file đó đi nữa
+    except Exception as e:
+        print(f"Lỗi khi xóa: {e}")
+    finally:
+        conn.close()
+    return redirect(url_for("thesis.thesesprojects"))
+# Cách sửa an toàn:
+# 1. Lấy đường dẫn đến file hiện tại: .../app/thesis/routes.py
+# 2. Nhảy lên 3 cấp để ra thư mục gốc dự án: .../
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+# 3. Trỏ vào static/uploads nằm ở thư mục gốc
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
+# 2. Route Cập nhật đề tài (Giao diện Form)
+@thesis_bp.route("/theses/edit/<int:topic_id>", methods=["GET", "POST"])
+def edit_thesis(topic_id):
+    if session.get('role') != 'lecturer':
+        flash("Bạn không có quyền thực hiện thao tác này!", "danger")
+        return redirect(url_for("thesis.thesesprojects"))
+
+    conn = get_db()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        title = request.form.get("title")
+        description = request.form.get("description")
+        source_url = request.form.get("source_code_url")
+
+        # Xử lý File báo cáo
+        file = request.files.get('report_file')
+        file_url = None
+
+        if file and file.filename != '':
+            filename = secure_filename(file.filename)
+
+            # Tạo thư mục nếu chưa có
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+            # Lưu file vật lý
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(file_path)
+
+            # Lưu đường dẫn vào DB (Dùng đường dẫn web)
+            file_url = f"/static/uploads/{filename}"
+        try:
+            # 1. Luôn cập nhật thông tin tiêu đề/mô tả trong bảng topics
+            cursor.execute("UPDATE topics SET title = ?, description = ? WHERE id = ?",
+                           (title, description, topic_id))
+
+            # 2. Kiểm tra xem topic_id này đã tồn tại trong published_reports chưa
+            check_sql = "SELECT id, file_url FROM published_reports WHERE topic_id = ?"
+            existing_report = cursor.execute(check_sql, (topic_id,)).fetchone()
+
+            if existing_report:
+                # Nếu ĐÃ CÓ: Update (phần này không cần student_id vì nó đã có sẵn)
+                update_sql = """
+                                UPDATE published_reports 
+                                SET file_url = COALESCE(?, file_url),
+                                    source_code_url = ?,
+                                    published_at = datetime('now')
+                                WHERE topic_id = ?
+                            """
+                cursor.execute(update_sql, (file_url, source_url, topic_id))
+            else:
+                # Nếu CHƯA CÓ: Insert mới hoàn toàn
+                # BƯỚC QUAN TRỌNG: Phải lấy student_id của đề tài này trước
+                topic_data = cursor.execute("SELECT student_id, class_id FROM topics WHERE id = ?",
+                                            (topic_id,)).fetchone()
+
+                if topic_data:
+                    insert_sql = """
+                                    INSERT INTO published_reports (topic_id, student_id, class_id, file_url, source_code_url, published_at)
+                                    VALUES (?, ?, ?, ?, ?, datetime('now'))
+                                """
+                    # Truyền thêm student_id và class_id vào để thỏa mãn ràng buộc database
+                    cursor.execute(insert_sql, (
+                        topic_id,
+                        topic_data['student_id'],
+                        topic_data['class_id'],
+                        file_url,
+                        source_url
+                    ))
+            conn.commit()
+            flash("Cập nhật đề tài thành công!", "success")
+        except Exception as e:
+            conn.rollback()
+            flash(f"Lỗi database: {str(e)}", "danger")
+        finally:
+            conn.close()
+        return redirect(url_for("thesis.thesesprojects"))
+
+    # --- Phần GET dữ liệu cũ giữ nguyên ---
+    sql = """
+    SELECT t.*, ct.type_name, u.full_name as student_name, s.id as student_code,
+           pr.file_url, pr.source_code_url
+    FROM topics t
+    JOIN students s ON t.student_id = s.id
+    JOIN users u ON s.user_id = u.id
+    JOIN classes c ON t.class_id = c.id
+    JOIN courses co ON c.course_id = co.id
+    JOIN course_types ct ON co.course_type_id = ct.id
+    LEFT JOIN published_reports pr ON t.id = pr.topic_id
+    WHERE t.id = ?
+    """
+    thesis = cursor.execute(sql, (topic_id,)).fetchone()
+    conn.close()
+
+    if not thesis:
+        abort(404)
+
+    return render_template("edit_thesis.html", t=thesis)

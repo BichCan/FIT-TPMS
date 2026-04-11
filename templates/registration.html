@@ -309,12 +309,16 @@
     <script id="thesis-lecturers-data" type="application/json">
         {{ thesis_lecturers | tojson | safe }}
     </script>
+    <script id="registered-lecturers-data" type="application/json">
+        {{ registered_lecturer_ids | tojson | safe }}
+    </script>
 
     <script>
         // Dữ liệu từ Flask backend
         let currentType = 'project';
         const projectLecturers = JSON.parse(document.getElementById('project-lecturers-data').textContent);
         const thesisLecturers = JSON.parse(document.getElementById('thesis-lecturers-data').textContent);
+        const registeredLecturers = JSON.parse(document.getElementById('registered-lecturers-data').textContent);
 
     window.onload = () => {
         renderLecturers();
@@ -369,6 +373,24 @@
 
             const card = document.createElement('div');
             card.className = 'lecturer-card';
+            
+            let btnHtml = '';
+            if (registeredLecturers.includes(lecturer.id)) {
+                btnHtml = `
+                    <button class="register-btn" disabled style="background: #002D8E; margin-bottom: 12px; cursor: default;">
+                        Đã gửi yêu cầu đăng ký
+                    </button>
+                    <button class="register-btn" onclick="cancelRegistration(${lecturer.id})" style="background: #E2E8F0; color: #1F2937;">
+                        Hủy đăng ký
+                    </button>
+                `;
+            } else {
+                btnHtml = `
+                    <button class="register-btn" onclick="registerSupervisor(${lecturer.id})">
+                        <i class="fa-regular fa-paper-plane"></i> Đăng ký hướng dẫn
+                    </button>
+                `;
+            }
 
             card.innerHTML = `
                 <div class="card-header">
@@ -382,9 +404,7 @@
                     <span class="focus-title"><i class="fa-solid fa-book"></i> Lĩnh vực nghiên cứu</span>
                     <p class="focus-text">${researchArea}</p>
                 </div>
-                <button class="register-btn" onclick="registerSupervisor(${lecturer.id})">
-                    <i class="fa-regular fa-paper-plane"></i> Đăng ký hướng dẫn
-                </button>
+                ${btnHtml}
             `;
             container.appendChild(card);
         });
@@ -393,6 +413,27 @@
     function registerSupervisor(lecturerId) {
         const courseTypeId = currentType === 'project' ? 1 : 2;
         window.location.href = `/registration/form/${lecturerId}?course_type_id=${courseTypeId}`;
+    }
+
+    async function cancelRegistration(lecturerId) {
+        if (!confirm('Bạn có chắc chắn muốn hủy đăng ký giảng viên này?')) return;
+        try {
+            const formData = new FormData();
+            formData.append('lecturer_id', lecturerId);
+            const response = await fetch('/registration/cancel', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert(result.message);
+                window.location.reload();
+            } else {
+                alert('Có lỗi xảy ra: ' + result.message);
+            }
+        } catch (error) {
+            alert('Có lỗi xảy ra khi hủy đăng ký. Vui lòng thử lại.');
+        }
     }
 </script>
 {% endblock %}

@@ -5,10 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Scholaris Pro{% endblock %} | FIT-TPMS</title>
-    <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     {% block styles %}{% endblock %}
     <style>
         :root {
@@ -79,6 +78,9 @@
             font-weight: 700;
             color: var(--primary-color);
             line-height: 1;
+            margin: 0;
+            margin-top: 4px;
+            margin-bottom: 2px;
         }
 
         .logo-text span {
@@ -138,12 +140,28 @@
             color: var(--primary-color);
         }
 
-        .user-profile {
+        /* Tùy chỉnh Dropdown Avatar */
+        .user-dropdown-toggle {
             display: flex;
             align-items: center;
             gap: 12px;
             padding-left: 20px;
             border-left: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-dropdown-toggle::after {
+            content: '\f0d7';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .user-dropdown-toggle[aria-expanded="true"]::after {
+            transform: rotate(180deg);
         }
 
         .avatar {
@@ -158,6 +176,29 @@
             font-size: 0.9rem;
             font-weight: 600;
             object-fit: cover;
+        }
+
+        .dropdown-menu {
+            box-shadow: var(--shadow) !important;
+            padding: 8px !important;
+        }
+
+        .dropdown-item {
+            border-radius: 8px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+
+        .dropdown-item.text-danger:hover {
+            background-color: #FEE2E2;
+            color: #DC2626 !important;
         }
 
         /* LAYOUT WRAPPER */
@@ -182,6 +223,8 @@
 
         .nav-menu {
             list-style: none;
+            padding: 0;
+            margin: 0;
         }
 
         .nav-item {
@@ -230,19 +273,6 @@
         .content-area {
             flex: 1;
             min-height: 500px;
-            /* Placeholder styles if empty */
-            background: var(--white);
-            border-radius: 20px;
-            border: 1px dashed var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
-        
-        .content-area:has(*) {
-            border: none;
             background: transparent;
             display: block;
         }
@@ -330,11 +360,70 @@
         @media (max-width: 1024px) {
             .sidebar {
                 width: 80px;
-                padding: 40px 10px;
+                padding: 40px 0;
+                overflow: visible;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-menu {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-item {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 0;
+                width: 56px;
+                height: 56px;
+                border-radius: 14px;
+                position: relative;
+            }
+
+            .nav-link i {
+                width: auto;
+                font-size: 1.25rem;
+                margin: 0;
             }
 
             .nav-link span {
                 display: none;
+                position: absolute;
+                left: calc(100% + 14px);
+                top: 50%;
+                transform: translateY(-50%);
+                background: var(--text-dark);
+                color: var(--white);
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+                margin: 0;
+                z-index: 1000;
+                box-shadow: var(--shadow);
+            }
+
+            .nav-link span::before {
+                content: '';
+                position: absolute;
+                right: 100%;
+                top: 50%;
+                transform: translateY(-50%);
+                border: 5px solid transparent;
+                border-right-color: var(--text-dark);
+            }
+
+            .nav-link:hover span {
+                display: block;
             }
 
             .main-content {
@@ -355,7 +444,7 @@
                 grid-template-columns: 1fr;
                 gap: 30px;
             }
-            
+
             .search-bar {
                 display: none;
             }
@@ -364,7 +453,6 @@
 </head>
 
 <body>
-    <!-- HEADER -->
     <header class="header">
         <div class="logo-section">
             <div class="logo-icon">
@@ -379,87 +467,123 @@
         <div class="header-actions">
             <i class="fa-regular fa-bell action-icon"></i>
             <i class="fa-regular fa-circle-question action-icon"></i>
-            <div class="user-profile">
-                {% if session.get('user_id') %}
-                    <div class="avatar">{{ session.get('username')[:2].upper() }}</div>
-                {% else %}
-                    <div class="avatar">?</div>
-                {% endif %}
+
+            <div class="dropdown">
+                <div class="user-dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    {% if session.get('user_id') %}
+                    <div class="avatar">
+                        {% if session.get('role') == 'lecturer' %}
+                        GV
+                        {% else %}
+                        {{ session.get('user_full_name')[:2].upper() if session.get('user_full_name') else 'SV' }}
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                    {% endif %}
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3" aria-labelledby="userDropdown"
+                    style="border-radius: 12px; min-width: 220px;">
+                    {% if session.get('user_id') %}
+                    <li class="px-3 py-2 mb-2 border-bottom">
+                        <span class="d-block fw-bold text-dark">{{ session.get('username') }}</span>
+                        <small class="text-muted">
+                            {% if session.get('role') == 'lecturer' %}
+                            Tài khoản Giảng viên
+                            {% else %}
+                            Tài khoản Sinh viên
+                            {% endif %}
+                        </small>
+                    </li>
+                    <li><a class="dropdown-item py-2 text-danger" href="{{ url_for('login.logout') }}"><i
+                                class="fa-solid fa-right-from-bracket me-2"></i>Đăng xuất</a></li>
+                    {% else %}
+                    <li><a class="dropdown-item py-2 mb-1" href="{{ url_for('login.login') }}"><i
+                                class="fa-solid fa-right-to-bracket me-2"></i>Đăng nhập</a></li>
+                    <li><a class="dropdown-item py-2" href="{{ url_for('login.logins') }}"><i
+                                class="fa-solid fa-user-plus me-2"></i>Đăng ký</a></li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
     </header>
 
     <div class="layout-wrapper">
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <ul class="nav-menu">
                 <li class="nav-item">
                     <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
                         <i class="fa-solid fa-house"></i>
-                        <span>Home</span>
+                        <span>Trang chủ</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="/theses-projects" class="nav-link {% if 'theses' in request.path %}active{% endif %}">
                         <i class="fa-solid fa-book-bookmark"></i>
-                        <span>Theses</span>
+                        <span>Báo cáo</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="/registration" class="nav-link {% if 'registration' in request.path %}active{% endif %}">
                         <i class="fa-solid fa-user-group"></i>
-                        <span>Supervisors</span>
+                        <span>Đăng kí GVHD</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="/my-projects"
+                        class="nav-link {% if 'my-projects' in request.path or 'project-detail' in request.path or 'assignment' in request.path %}active{% endif %}">
                         <i class="fa-solid fa-diagram-project"></i>
-                        <span>My Project</span>
+                        <span>Lớp học</span>
                     </a>
                 </li>
-                {% if session.get('user_id') %}
-                <li class="nav-item">
-                    <a href="{{ url_for('login.logout') }}" class="nav-link" style="color: #dc2626;">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        <span>Logout ({{ session.get('username') }})</span>
-                    </a>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a href="{{ url_for('login.login') }}" class="nav-link">
-                        <i class="fa-solid fa-right-to-bracket"></i>
-                        <span>Login</span>
-                    </a>
-                </li>
-                {% endif %}
             </ul>
         </aside>
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
+
+            <div class="container-fluid px-0">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show shadow-sm"
+                    role="alert" style="border-radius: 12px; margin-bottom: 20px;">
+                    {% if category == 'success' %}
+                    <i class="fas fa-check-circle me-2"></i>
+                    {% elif category == 'danger' or category == 'error' %}
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {% elif category == 'warning' %}
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    {% else %}
+                    <i class="fas fa-info-circle me-2"></i>
+                    {% endif %}
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+
             <div class="content-area">
                 {% block content %}
-                <!-- Child templates will inject content here -->
-                Vùng làm việc trống
                 {% endblock %}
             </div>
 
-            <!-- FOOTER -->
             <footer class="footer">
                 <div class="footer-grid">
                     <div class="footer-col">
-                        <h4>Info</h4>
+                        <h4>Thông tin</h4>
                         <ul class="footer-links">
-                            <li class="footer-link"><a href="#">About Us</a></li>
-                            <li class="footer-link"><a href="#">Academic Policies</a></li>
-                            <li class="footer-link"><a href="#">Guidelines</a></li>
+                            <li class="footer-link"><a href="#">Về chúng tôi</a></li>
+                            <li class="footer-link"><a href="#">Chính sách học tập</a></li>
+                            <li class="footer-link"><a href="#">Hướng dẫn</a></li>
                         </ul>
                     </div>
                     <div class="footer-col">
-                        <h4>Contact Us</h4>
+                        <h4>Liên hệ</h4>
                         <div class="contact-info">
                             <i class="fa-regular fa-envelope"></i>
-                            contact@scholaris.edu
+                            fit@neu.edu.vn
                         </div>
                         <div class="contact-info">
                             <i class="fa-solid fa-phone"></i>
@@ -467,7 +591,7 @@
                         </div>
                     </div>
                     <div class="footer-col">
-                        <h4>Get Social</h4>
+                        <h4>Mạng xã hội</h4>
                         <div class="social-icons">
                             <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
                             <a href="#" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
@@ -482,6 +606,8 @@
             </footer>
         </main>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
