@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import render_template, request, redirect, url_for, flash, jsonify, session
 from app.database import get_db
-from app.registration import registration_bp
+from . import registration_bp
 
 
 def get_current_semester():
@@ -55,7 +55,7 @@ def registration():
             registered_lecturer_ids = [row['lecturer_id'] for row in cursor.fetchall()]
     db.close()
 
-    return render_template("registration.html", 
+    return render_template("student/registration.html", 
                          current_semester=current_semester, 
                          project_lecturers=project_lecturers, 
                          thesis_lecturers=thesis_lecturers,
@@ -80,7 +80,7 @@ def registration_form(lecturer_id):
     course_type_id = request.args.get('course_type_id', 1, type=int)
     course_type_name = "Đề án" if course_type_id == 1 else "Khóa luận"
     
-    return render_template("registrationform.html", 
+    return render_template("student/registrationform.html", 
                          lecturer=dict(lecturer),
                          course_type_id=course_type_id,
                          course_type_name=course_type_name)

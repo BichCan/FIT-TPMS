@@ -3,7 +3,7 @@ import sqlite3
 from flask import render_template, request, redirect, url_for, flash, abort, session
 from werkzeug.utils import secure_filename
 from app.database import get_db
-from app.thesis import thesis_bp
+from . import thesis_bp
 
 @thesis_bp.route("/theses-projects")
 def thesesprojects():
@@ -72,7 +72,7 @@ def thesesprojects():
     conn.close()
 
     return render_template(
-        "theses.html",
+        "student/theses.html",
         theses=rows,
         q=q,
         year=year,
@@ -122,7 +122,7 @@ def thesis_detail(topic_id):
     thesis = cursor.execute(sql, (topic_id,)).fetchone()
     conn.close()
 
-    return render_template("thesis_detail.html", t=thesis)
+    return render_template("student/thesis_detail.html", t=thesis)
 # 1. Route Xóa đề tài
 @thesis_bp.route("/theses/delete/<int:topic_id>", methods=["POST"])
 def delete_thesis(topic_id):
@@ -244,4 +244,4 @@ def edit_thesis(topic_id):
     if not thesis:
         abort(404)
 
-    return render_template("edit_thesis.html", t=thesis)
+    return render_template("student/edit_thesis.html", t=thesis)
