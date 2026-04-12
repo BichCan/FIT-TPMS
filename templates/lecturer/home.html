@@ -1,0 +1,100 @@
+
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='theses.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-container">
+<h1 class="page-title">
+    Xin chào {{ lecturer.full_name }}
+</h1>
+
+<!-- SEARCH + SEMESTER FILTER -->
+<div class="top-bar">
+
+    <!-- SEARCH -->
+    <form method="get" class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+            type="text"
+            name="q"
+            placeholder="Tìm kiếm lớp học..."
+            value="{{ request.args.get('q','') }}"
+        >
+    </form>
+
+    <!-- SEMESTER FILTER -->
+    <form method="get">
+        <select
+            name="semester"
+            class="semester-select"
+            onchange="this.form.submit()"
+        >
+            <option value="">Tất cả học kỳ</option>
+            {% for s in semesters %}
+            <option
+                value="{{ s.id }}"
+                {% if request.args.get('semester') == s.id|string %}selected{% endif %}
+            >
+                {{ s.name }} {{ s.year }}
+            </option>
+            {% endfor %}
+        </select>
+    </form>
+
+</div>
+
+<!-- SUB MENU -->
+<div class="sub-menu">
+    <a href="{{ url_for('lecturer_home.home') }}"
+       class="{% if not request.args.get('type') %}active{% endif %}">
+        Tất cả
+    </a>
+    <a href="?type=de-an"
+   class="{% if request.args.get('type') == 'de-an' %}active{% endif %}">
+    Đề án
+</a>
+
+<a href="?type=khoa-luan"
+   class="{% if request.args.get('type') == 'khoa-luan' %}active{% endif %}">
+    Khóa luận
+</a>
+</div>
+
+<!-- TITLE LIST -->
+<h2 class="section-title">
+    Danh sách lớp học
+</h2>
+
+<!-- CLASS LIST -->
+<div class="class-grid">
+    {% for c in classes %}
+    <div class="class-card">
+
+        <!-- TAG -->
+        <div class="card-top">
+        <span class="tag {{ 'thesis' if c.course_type == 'Khóa luận' else 'project' }}">
+            {{ c.course_type }}
+        </span>
+        </div>
+        <div class="card-body">
+            <div class="class-code">{{ c.class_code }}</div>
+            <div class="class-name">{{ c.class_name }}</div>
+        </div>
+
+        <div class="card-footer">
+            <span>{{ c.semester_name }} {{ c.semester_year }}</span>
+            <span>{{ c.student_count }} SV</span>
+        </div>
+
+    </div>
+    {% else %}
+    <p>Không có lớp học nào.</p>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}
