@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="86a4e906-3229-4966-884e-969ceedbba56" name="Changes" comment="" />
+    <list default="true" id="86a4e906-3229-4966-884e-969ceedbba56" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FIT-TPMS.db" beforeDir="false" afterPath="$PROJECT_DIR$/FIT-TPMS.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/login/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/uploads/data.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/student/myprojects/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/student/myprojects/routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/student/thesis/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/student/thesis/routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/uploads/59_4_2026.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/lecturer/edit_thesis.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/lecturer/edit_thesis.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,12 +36,12 @@
     &quot;assignee&quot;: &quot;LinhNghia&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/BichCan/FIT-TPMS.git",
-    "accountId": "3bfdcf5e-fa28-44ea-af7c-c6c152fcf12a"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/BichCan/FIT-TPMS.git&quot;,
+    &quot;accountId&quot;: &quot;3bfdcf5e-fa28-44ea-af7c-c6c152fcf12a&quot;
   }
-}]]></component>
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />

@@ -13,7 +13,7 @@ def login():
         db = get_db()
         cursor = db.cursor() 
         
-        print(f"DEBUG LOGIN: Email={username}, Password={password}, Role={role}")
+        print(f"DEBUG LOGIN: Email={username}, Role={role}")
         
         cursor.execute('SELECT * FROM users WHERE email = ? AND password = ? AND role = ?', 
                        (username, password, role))
