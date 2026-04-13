@@ -10,6 +10,23 @@ def get_current_semester():
     cursor.execute("SELECT * FROM semesters WHERE is_current = 1 LIMIT 1")
     current_semester = cursor.fetchone()
     return current_semester
+
+def sync_lecturer_quota(cursor, lecturer_id, course_type_id, semester_id):
+    """Recalculate and update current_students in lecturer_quotas based on registrations."""
+    # Count rows in registrations for this combination
+    cursor.execute("""
+        SELECT COUNT(*) FROM registrations 
+        WHERE lecturer_id = ? AND course_type_id = ? AND semester_id = ?
+    """, (lecturer_id, course_type_id, semester_id))
+    
+    count = cursor.fetchone()[0]
+    
+    # Update lecturer_quotas
+    cursor.execute("""
+        UPDATE lecturer_quotas 
+        SET current_students = ? 
+        WHERE lecturer_id = ? AND course_type_id = ? AND semester_id = ?
+    """, (count, lecturer_id, course_type_id, semester_id))
 def get_lecturers_by_course_type(course_type_id):
     db = get_db()
     cursor = db.cursor()
@@ -18,7 +35,8 @@ def get_lecturers_by_course_type(course_type_id):
         return []
     
     cursor.execute("""
-        SELECT l.*, u.full_name, u.email, u.phone
+        SELECT l.*, u.full_name, u.email, u.phone, 
+               q.max_students, q.current_students
         FROM lecturers l
         JOIN users u ON l.user_id = u.id
         JOIN lecturer_quotas q ON l.id = q.lecturer_id
@@ -119,6 +137,10 @@ def registration_submit():
             'pending', datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             knowledge, project, topic
         ))
+        
+        # Trigger sync
+        sync_lecturer_quota(cursor, lecturer_id, course_type_id, current_semester['id'])
+        
         db.commit()
         return jsonify({"success": True, "message": "Đăng ký thành công! Vui lòng chờ giảng viên duyệt."})
     except Exception as e:
@@ -145,12 +167,27 @@ def cancel_registration():
     student_id = student_res['id']
     
     try:
+        # Need course_type_id to sync quota later
         cursor.execute("""
-            DELETE FROM registrations 
+            SELECT course_type_id FROM registrations 
             WHERE student_id = ? AND lecturer_id = ? AND semester_id = ?
         """, (student_id, lecturer_id, current_semester['id']))
-        db.commit()
-        return jsonify({"success": True, "message": "Hủy đăng ký thành công."})
+        reg = cursor.fetchone()
+        
+        if reg:
+            course_type_id = reg['course_type_id']
+            cursor.execute("""
+                DELETE FROM registrations 
+                WHERE student_id = ? AND lecturer_id = ? AND semester_id = ?
+            """, (student_id, lecturer_id, current_semester['id']))
+            
+            # Trigger sync
+            sync_lecturer_quota(cursor, lecturer_id, course_type_id, current_semester['id'])
+            
+            db.commit()
+            return jsonify({"success": True, "message": "Hủy đăng ký thành công."})
+        else:
+            return jsonify({"success": False, "message": "Không tìm thấy bản ghi đăng ký."})
     except Exception as e:
         db.rollback()
         return jsonify({"success": False, "message": str(e)})
