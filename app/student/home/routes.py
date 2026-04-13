@@ -37,7 +37,7 @@ def home():
             JOIN course_types ct ON co.course_type_id = ct.id
             JOIN lecturers l ON c.lecturer_id = l.id
             JOIN users u ON l.user_id = u.id
-            WHERE cs.student_id = ? AND c.semester_id = ?
+            WHERE cs.student_id = ? AND c.semester_id = ? AND c.status = 'active'
         """, (student_id, current_semester['id']))
         ongoing_courses = cursor.fetchall()
 
