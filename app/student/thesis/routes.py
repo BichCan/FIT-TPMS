@@ -69,7 +69,6 @@ def thesesprojects():
         sql += " AND course_types.type_name = 'Khóa luận'"
 
     rows = cursor.execute(sql, params).fetchall()
-    conn.close()
 
     return render_template(
         "student/theses.html",
@@ -120,7 +119,6 @@ def thesis_detail(topic_id):
     """
 
     thesis = cursor.execute(sql, (topic_id,)).fetchone()
-    conn.close()
 
     return render_template("student/thesis_detail.html", t=thesis)
 # 1. Route Xóa đề tài
@@ -135,8 +133,6 @@ def delete_thesis(topic_id):
         # Lưu ý: Nếu có file PDF/Source code trên server, bạn nên xóa file đó đi nữa
     except Exception as e:
         print(f"Lỗi khi xóa: {e}")
-    finally:
-        conn.close()
     return redirect(url_for("thesis.thesesprojects"))
 # Cách sửa an toàn:
 # 1. Lấy đường dẫn đến file hiện tại: .../app/thesis/routes.py
@@ -221,8 +217,6 @@ def edit_thesis(topic_id):
         except Exception as e:
             conn.rollback()
             flash(f"Lỗi database: {str(e)}", "danger")
-        finally:
-            conn.close()
         return redirect(url_for("thesis.thesesprojects"))
 
     # --- Phần GET dữ liệu cũ giữ nguyên ---
@@ -239,7 +233,6 @@ def edit_thesis(topic_id):
     WHERE t.id = ?
     """
     thesis = cursor.execute(sql, (topic_id,)).fetchone()
-    conn.close()
 
     if not thesis:
         abort(404)

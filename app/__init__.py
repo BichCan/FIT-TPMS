@@ -6,6 +6,7 @@ from app.student.registration import registration_bp
 from app.student.thesis import thesis_bp
 from app.login import login_bp
 from app.lecturer.registrationsmanagement import registrationsmanagement_bp
+from app.database import close_db
 
 def create_app():
     base_dir = os.path.dirname(os.path.dirname(__file__))
@@ -16,6 +17,9 @@ def create_app():
         static_folder=os.path.join(base_dir, "static")
     )
     app.config['SECRET_KEY'] = 'dev-key-academic-prestige' # Should be in env in production
+
+    # Đăng ký teardown để tự động đóng DB
+    app.teardown_appcontext(close_db)
 
     app.register_blueprint(thesis_bp)
     app.register_blueprint(myprojects_bp)
