@@ -61,12 +61,77 @@ def registrations_management():
     
     cursor.execute(query, params)
     registrations = cursor.fetchall()
+
+    # Kiem tra xem co quota nao chua
+    cursor.execute("""
+        SELECT COUNT(*) FROM lecturer_quotas 
+        WHERE lecturer_id = ? AND semester_id = ?
+    """, (lecturer_id, semester_id))
+    quota_count = cursor.fetchone()[0]
+    require_quota_setup = (quota_count == 0)
     
     return render_template(
         'lecturer/registrationsmanagement.html',
         registrations=registrations,
-        current_filter=course_type_filter
+        current_filter=course_type_filter,
+        require_quota_setup=require_quota_setup
     )
+
+@registrationsmanagement_bp.route('/lecturer/api/save-quota', methods=['POST'])
+def save_quota():
+    if 'user_id' not in session or session.get('role') != 'lecturer':
+        return jsonify({"error": "Unauthorized"}), 403
+
+    data = request.json
+    project_max = data.get('project_max')
+    thesis_max = data.get('thesis_max')
+
+    if project_max is None or thesis_max is None:
+        return jsonify({"error": "Missing parameters"}), 400
+
+    try:
+        project_max = int(project_max)
+        thesis_max = int(thesis_max)
+    except ValueError:
+        return jsonify({"error": "Invalid format"}), 400
+
+    user_id = session['user_id']
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("SELECT id FROM lecturers WHERE user_id = ?", (user_id,))
+    lecturer = cursor.fetchone()
+    if not lecturer:
+        return jsonify({"error": "Lecturer not found"}), 404
+
+    cursor.execute("SELECT id FROM semesters WHERE is_current = 1")
+    semester = cursor.fetchone()
+    if not semester:
+        return jsonify({"error": "Semester not found"}), 404
+
+    lecturer_id = lecturer['id']
+    semester_id = semester['id']
+
+    try:
+        cursor.execute("SELECT COUNT(*) FROM lecturer_quotas WHERE lecturer_id = ? AND semester_id = ?", (lecturer_id, semester_id))
+        if cursor.fetchone()[0] > 0:
+            return jsonify({"error": "Quota already set"}), 400
+
+        cursor.execute("""
+            INSERT INTO lecturer_quotas (lecturer_id, course_type_id, semester_id, max_students, current_students)
+            VALUES (?, 1, ?, ?, 0)
+        """, (lecturer_id, semester_id, project_max))
+
+        cursor.execute("""
+            INSERT INTO lecturer_quotas (lecturer_id, course_type_id, semester_id, max_students, current_students)
+            VALUES (?, 2, ?, ?, 0)
+        """, (lecturer_id, semester_id, thesis_max))
+
+        db.commit()
+        return jsonify({"success": True})
+    except Exception as e:
+        db.rollback()
+        return jsonify({"error": str(e)}), 500
 
 @registrationsmanagement_bp.route('/lecturer/api/get-available-classes/<int:registration_id>')
 def get_available_classes(registration_id):
