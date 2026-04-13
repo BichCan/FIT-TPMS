@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request,session,redirect,url_for
 from app.database import get_db
 
 lecturer_home_bp = Blueprint(
@@ -10,9 +10,11 @@ lecturer_home_bp = Blueprint(
 
 @lecturer_home_bp.route('/home')
 def home():
+    if 'user_id' not in session or session.get('role') != 'lecturer':
+        return redirect(url_for('login.login'))
 
-    lecturer_id = 15
-
+    user_id = session['user_id']
+    
     keyword = request.args.get('q', '')
     course_type = request.args.get('type', '')
     semester_id = request.args.get('semester', '')
@@ -20,17 +22,18 @@ def home():
     db = get_db()
     cursor = db.cursor()
 
-    cursor.execute("""
-           SELECT users.full_name
-           FROM lecturers
-           JOIN users ON lecturers.user_id = users.id
-           WHERE lecturers.id = ?
-       """, (lecturer_id,))
+    # Lấy lecturer_id từ user_id trong session
+    cursor.execute("SELECT lecturers.id, full_name FROM lecturers JOIN users ON lecturers.user_id = users.id WHERE users.id = ?", (user_id,))
     lecturer = cursor.fetchone()
-
+    
+    if not lecturer:
+        return "Lecturer not found", 404
+        
+    lecturer_id = lecturer['id']
 
     sql = """
-        SELECT classes.*, semesters.name AS semester_name, semesters.year AS semester_year
+        SELECT classes.*, semesters.name AS semester_name, semesters.year AS semester_year,
+        (SELECT COUNT(*) FROM class_students WHERE class_id = classes.id) as student_count
         FROM classes
         LEFT JOIN semesters ON classes.semester_id = semesters.id
         WHERE classes.lecturer_id = ?
@@ -68,9 +71,9 @@ def home():
         ]
 
     def get_course_type(class_code):
-        if class_code.startswith("DA_"):
+        if class_code.startswith("DA_") or class_code.startswith("DA"):
             return "Đề án"
-        elif class_code.startswith("KL_"):
+        elif class_code.startswith("KL_") or class_code.startswith("KL"):
             return "Khóa luận"
         return "Khác"
 
@@ -82,8 +85,6 @@ def home():
         classes_with_type.append(c)
 
     classes = classes_with_type
-
-    db.close()
 
 
     return render_template(
