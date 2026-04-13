@@ -87,6 +87,9 @@ def registration_form(lecturer_id):
 def registration_submit():
     lecturer_id = request.form.get("lecturer_id")
     course_type_id = request.form.get("course_type_id")
+    knowledge = request.form.get("knowledge")
+    project = request.form.get("project")
+    topic = request.form.get("topic")
     
     current_semester = get_current_semester()
     if not current_semester:
@@ -108,11 +111,13 @@ def registration_submit():
     try:
         cursor.execute("""
             INSERT INTO registrations (
-                student_id, lecturer_id, course_type_id, semester_id, status, registered_at
-            ) VALUES (?, ?, ?, ?, ?, ?)
+                student_id, lecturer_id, course_type_id, semester_id, status, registered_at,
+                knowledge, project, topic
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             student_id, lecturer_id, course_type_id, current_semester['id'], 
-            'pending', datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            'pending', datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            knowledge, project, topic
         ))
         db.commit()
         return jsonify({"success": True, "message": "Đăng ký thành công! Vui lòng chờ giảng viên duyệt."})
