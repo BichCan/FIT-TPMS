@@ -11,6 +11,11 @@ def thesesprojects():
     year = request.args.get("year", "")
     type_ = request.args.get("type", "all")
 
+    # Xác định base template dựa trên vai trò
+    base_template = "student/base.html"
+    if session.get('role') == 'lecturer':
+        base_template = "lecturer/base.html"
+
     conn = get_db()
     cursor = conn.cursor()
 
@@ -54,7 +59,6 @@ def thesesprojects():
         sql += " AND ct.type_name = 'Khóa luận'"
 
     rows = cursor.execute(sql, params).fetchall()
-    conn.close()
 
     return render_template(
         "student/theses.html",
@@ -62,11 +66,16 @@ def thesesprojects():
         q=q,
         year=year,
         type=type_,
-        years=years
+        years=years,
+        base_template=base_template
     )
 
 @thesis_bp.route("/theses/<int:topic_id>")
 def thesis_detail(topic_id):
+    base_template = "student/base.html"
+    if session.get('role') == 'lecturer':
+        base_template = "lecturer/base.html"
+
     conn = get_db()
     cursor = conn.cursor()
 
@@ -105,9 +114,12 @@ def thesis_detail(topic_id):
     """
 
     thesis = cursor.execute(sql, (topic_id,)).fetchone()
-    conn.close()
 
-    return render_template("student/thesis_detail.html", t=thesis)
+    return render_template(
+        "student/thesis_detail.html",
+        t=thesis,
+        base_template=base_template
+    )
 
 
 # 1. Route Xóa đề tài
@@ -122,8 +134,6 @@ def delete_thesis(topic_id):
         # Lưu ý: Nếu có file PDF/Source code trên server, bạn nên xóa file đó đi nữa
     except Exception as e:
         print(f"Lỗi khi xóa: {e}")
-    finally:
-        conn.close()
     return redirect(url_for("thesis.thesesprojects"))
 # 1. Lấy đường dẫn tuyệt đối của thư mục chứa file routes.py hiện tại
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -214,8 +224,6 @@ def edit_thesis(topic_id):
         except Exception as e:
             conn.rollback()
             flash(f"Lỗi database: {str(e)}", "danger")
-        finally:
-            conn.close()
         return redirect(url_for("thesis.thesesprojects"))
 
     # --- Phần GET dữ liệu cũ giữ nguyên ---
@@ -232,7 +240,6 @@ def edit_thesis(topic_id):
     WHERE t.id = ?
     """
     thesis = cursor.execute(sql, (topic_id,)).fetchone()
-    conn.close()
 
     if not thesis:
         abort(404)
