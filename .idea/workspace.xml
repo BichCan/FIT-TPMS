@@ -5,7 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="86a4e906-3229-4966-884e-969ceedbba56" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/lecturer/registrationsmanagement/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/lecturer/registrationsmanagement/routes.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/lecturer/base.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/lecturer/registrationsmanagement.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FIT-TPMS.db" beforeDir="false" afterPath="$PROJECT_DIR$/FIT-TPMS.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/lecturer/home/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/lecturer/home/routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/login/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/student/registration/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/student/registration/routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/student/thesis/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/student/thesis/routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/lecturer/edit_thesis.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/lecturer/edit_thesis.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/lecturer/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/lecturer/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/student/theses.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/student/theses.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/student/thesis_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/student/thesis_detail.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +71,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "linh",
+    "git-widget-placeholder": "Merging master",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "to.speed.mode.migration.done": "true"

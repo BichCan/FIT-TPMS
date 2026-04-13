@@ -26,7 +26,6 @@ def get_lecturers_by_course_type(course_type_id):
     """, (course_type_id, current_semester['id']))
     
     lecturers = [dict(row) for row in cursor.fetchall()]
-    db.close()
     return lecturers
 
 @registration_bp.route("/registration")
@@ -53,7 +52,6 @@ def registration():
                 WHERE student_id = ? AND semester_id = ?
             """, (student_id, current_semester['id']))
             registered_lecturer_ids = [row['lecturer_id'] for row in cursor.fetchall()]
-    db.close()
 
     return render_template("student/registration.html", 
                          current_semester=current_semester, 
@@ -104,7 +102,6 @@ def registration_submit():
     cursor.execute("SELECT id FROM students WHERE user_id = ?", (user_id,))
     student_res = cursor.fetchone()
     if not student_res:
-        db.close()
         return jsonify({"success": False, "message": "Không tìm thấy thông tin sinh viên."}), 400
     student_id = student_res['id']
     
@@ -123,8 +120,6 @@ def registration_submit():
         db.rollback()
         print(f"Error during registration: {str(e)}")
         return jsonify({"success": False, "message": f"Có lỗi xảy ra khi lưu đăng ký: {str(e)}"})
-    finally:
-        db.close()
 
 @registration_bp.route("/registration/cancel", methods=["POST"])
 def cancel_registration():
@@ -140,7 +135,6 @@ def cancel_registration():
     cursor.execute("SELECT id FROM students WHERE user_id = ?", (user_id,))
     student_res = cursor.fetchone()
     if not student_res:
-        db.close()
         return jsonify({"success": False, "message": "Không tìm thấy thông tin."}), 400
         
     student_id = student_res['id']
@@ -155,5 +149,3 @@ def cancel_registration():
     except Exception as e:
         db.rollback()
         return jsonify({"success": False, "message": str(e)})
-    finally:
-        db.close()
