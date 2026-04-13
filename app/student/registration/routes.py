@@ -40,7 +40,7 @@ def get_lecturers_by_course_type(course_type_id):
         FROM lecturers l
         JOIN users u ON l.user_id = u.id
         JOIN lecturer_quotas q ON l.id = q.lecturer_id
-        WHERE q.course_type_id = ? AND q.semester_id = ?
+        WHERE q.course_type_id = ? AND q.semester_id = ? AND q.max_students > 0
     """, (course_type_id, current_semester['id']))
     
     lecturers = [dict(row) for row in cursor.fetchall()]

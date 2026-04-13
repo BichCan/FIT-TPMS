@@ -97,14 +97,15 @@ def project_detail(id):
                (id, class_info['student_pk']))
     topic = cur.fetchone()
 
-    # 4. Lấy danh sách thông báo thực tế
+    # 4. Lấy danh sách thông báo thực tế từ giảng viên (thuộc class_id này)
     cur.execute("""
         SELECT title, content, created_at 
         FROM notifications 
-        WHERE user_id = ? OR related_id = ? 
-        ORDER BY created_at DESC LIMIT 1
+        WHERE user_id = ? AND class_id = ? 
+        ORDER BY created_at DESC
     """, (user_id, id))
-    latest_notification = cur.fetchone()
+    all_notifications = cur.fetchall()
+    latest_notification = all_notifications[0] if all_notifications else None
 
     # 5. Danh sách bài tập và điểm số (Lấy grade từ bảng class_students)
     cur.execute("""
@@ -121,6 +122,7 @@ def project_detail(id):
     return render_template('student/project_detail.html',
                            class_info=class_info, topic=topic,
                            latest_notification=latest_notification,
+                           all_notifications=all_notifications,
                            assignments=assignments, progress=progress)
 
 
