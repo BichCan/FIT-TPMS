@@ -255,4 +255,4 @@ def submit_assignment(assignment_id):
     except ValueError:
         pass
 
-    return render_template('submission.html', assignment=assignment, submission=submission, is_overdue=is_overdue)
+    return render_template('student/submission.html', assignment=assignment, submission=submission, is_overdue=is_overdue)
