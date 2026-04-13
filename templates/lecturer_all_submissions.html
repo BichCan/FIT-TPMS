@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Tất cả bài nộp - {{ assignment['title'] }}{% endblock %}
+{% block content %}
+<style>
+    .back-link {
+        display: inline-flex; align-items: center; gap: 6px;
+        color: var(--primary-color); text-decoration: none; font-weight: 600;
+        font-size: 0.9rem; margin-bottom: 16px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h2 { font-size: 1.6rem; font-weight: 700; color: var(--text-dark); }
+    .page-header p { color: var(--text-muted); margin-top: 4px; }
+
+    .card-section {
+        background: var(--white); border-radius: 14px; padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .sub-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .sub-table th {
+        text-align: left; font-size: 0.72rem; font-weight: 700; color: var(--text-muted);
+        text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px;
+        border-bottom: 2px solid var(--border-color);
+    }
+    .sub-table td { padding: 14px 12px; border-bottom: 1px solid #F9FAFB; vertical-align: middle; }
+    .sub-table tr:hover { background: #FBFCFF; }
+
+    .student-cell { display: flex; align-items: center; gap: 10px; }
+    .student-avatar-sm {
+        width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light);
+        color: var(--primary-color); display: flex; align-items: center; justify-content: center;
+        font-size: 0.7rem; font-weight: 700;
+    }
+    .student-name { font-weight: 600; color: var(--text-dark); }
+    .student-code { font-size: 0.78rem; color: var(--text-muted); }
+
+    .late-badge {
+        font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+        background: #FEE2E2; color: #DC2626;
+    }
+    .on-time-badge {
+        font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+        background: #D1FAE5; color: #065F46;
+    }
+
+    .btn-view {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 6px 14px; border-radius: 8px; font-size: 0.78rem; font-weight: 600;
+        background: var(--primary-color); color: white; text-decoration: none;
+        transition: var(--transition);
+    }
+    .btn-view:hover { background: #001d5e; color: white; }
+
+    .empty-msg { text-align: center; padding: 40px; color: var(--text-muted); }
+    .stat-bar {
+        display: flex; gap: 20px; margin-bottom: 20px; font-size: 0.85rem; color: var(--text-muted);
+    }
+    .stat-bar strong { color: var(--text-dark); }
+</style>
+
+<a href="{{ url_for('lecturer.class_detail', class_id=class_id) }}" class="back-link">
+    <i class="fa-solid fa-arrow-left"></i> Quay lại chi tiết lớp
+</a>
+
+<div class="page-header">
+    <h2>{{ assignment['title'] }}</h2>
+    <p>{{ assignment['class_code'] }} &middot; Hạn nộp: {{ assignment['deadline'] }}</p>
+</div>
+
+<div class="stat-bar">
+    <span>Tổng bài nộp: <strong>{{ submissions|length }}</strong></span>
+    <span>Trễ hạn: <strong>{{ submissions|selectattr('is_late')|list|length }}</strong></span>
+</div>
+
+<div class="card-section">
+    {% if submissions %}
+    <table class="sub-table">
+        <thead>
+            <tr>
+                <th>Sinh viên</th>
+                <th>MSSV</th>
+                <th>File</th>
+                <th>Thời gian nộp</th>
+                <th>Trạng thái</th>
+                <th>Nhận xét</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in submissions %}
+            <tr>
+                <td>
+                    <div class="student-cell">
+                        <div class="student-avatar-sm">{{ s['student_name'][:2]|upper }}</div>
+                        <span class="student-name">{{ s['student_name'] }}</span>
+                    </div>
+                </td>
+                <td class="student-code">{{ s['student_code'] }}</td>
+                <td>{{ s['file_name'] or '—' }}</td>
+                <td style="font-size: 0.82rem; color: var(--text-muted);">{{ s['submitted_at'] }}</td>
+                <td>
+                    {% if s['is_late'] %}
+                        <span class="late-badge">Trễ hạn</span>
+                    {% else %}
+                        <span class="on-time-badge">Đúng hạn</span>
+                    {% endif %}
+                </td>
+                <td style="font-size: 0.82rem; color: var(--text-muted);">{{ s['feedback_count'] }} nhận xét</td>
+                <td>
+                    <a href="{{ url_for('lecturer.submission_detail', submission_id=s['id']) }}" class="btn-view">
+                        <i class="fa-solid fa-eye"></i> Xem
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-msg">
+        <i class="fa-solid fa-inbox" style="font-size: 2rem; color: #E5E7EB; display: block; margin-bottom: 12px;"></i>
+        Chưa có sinh viên nào nộp bài cho bài tập này.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

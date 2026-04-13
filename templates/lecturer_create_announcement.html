@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Tạo thông báo{% endblock %}
+{% block content %}
+<style>
+    .breadcrumb-nav {
+        font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;
+    }
+    .breadcrumb-nav a { color: var(--text-muted); text-decoration: none; }
+    .breadcrumb-nav a:hover { color: var(--primary-color); }
+    .page-header h2 { font-size: 1.75rem; font-weight: 700; color: var(--text-dark); }
+    .page-header p { color: var(--text-muted); margin-top: 4px; margin-bottom: 30px; }
+
+    .form-card {
+        background: var(--white); border-radius: 16px; padding: 36px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04); max-width: 750px;
+    }
+    .form-label-custom {
+        font-size: 0.9rem; font-weight: 700; color: var(--text-dark); margin-bottom: 8px;
+    }
+    .form-hint { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; margin-bottom: 20px; }
+    .form-control-custom {
+        width: 100%; padding: 14px 18px; border: 1px solid var(--border-color);
+        border-radius: 10px; font-size: 0.95rem; outline: none; transition: var(--transition);
+        background: var(--white); font-family: 'Inter', sans-serif;
+    }
+    .form-control-custom:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0,45,142,0.08);
+    }
+    textarea.form-control-custom { resize: vertical; min-height: 200px; }
+    .form-group { margin-bottom: 20px; }
+
+    .form-actions {
+        display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px;
+        padding-top: 24px; border-top: 1px solid var(--border-color);
+    }
+    .btn-cancel {
+        padding: 10px 24px; border-radius: 10px; font-weight: 600;
+        border: 1px solid var(--border-color); background: var(--white);
+        color: var(--text-muted); cursor: pointer; text-decoration: none; font-size: 0.9rem;
+    }
+    .btn-submit {
+        padding: 10px 24px; border-radius: 10px; font-weight: 600;
+        background: #DC2626; color: white; border: none; cursor: pointer; font-size: 0.9rem;
+    }
+    .btn-submit:hover { background: #B91C1C; }
+
+    .student-note {
+        background: #F9FAFB; border-radius: 10px; padding: 14px 18px;
+        display: flex; align-items: center; gap: 12px; margin-top: 20px;
+        font-size: 0.85rem; color: var(--text-muted);
+    }
+    .student-note i { color: var(--primary-color); }
+</style>
+
+<div class="breadcrumb-nav">
+    <a href="{{ url_for('lecturer.classes') }}">Lớp học</a> &rsaquo;
+    <a href="{{ url_for('lecturer.class_detail', class_id=class_info['id']) }}">{{ class_info['class_code'] }}</a> &rsaquo;
+    Tạo thông báo
+</div>
+
+<div class="page-header">
+    <h2>Tạo thông báo</h2>
+    <p>Chia sẻ cập nhật quan trọng, thời hạn hoặc tài liệu tham khảo cho sinh viên của bạn.
+       Thông báo này sẽ hiển thị trên bảng tin của sinh viên.</p>
+</div>
+
+<div class="form-card">
+    <form method="POST" action="{{ url_for('lecturer.create_announcement', class_id=class_info['id']) }}">
+        <div class="form-group">
+            <div class="form-label-custom">Tiêu đề thông báo</div>
+            <input type="text" name="title" class="form-control-custom"
+                   placeholder="Ví dụ: Thay đổi hạn nộp đề cương" required>
+            <div class="form-hint">Ngắn gọn và rõ ràng để dễ nhận biết.</div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-label-custom">Nội dung chi tiết</div>
+            <textarea name="content" class="form-control-custom"
+                      placeholder="Nhập nội dung chi tiết..."></textarea>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ url_for('lecturer.class_detail', class_id=class_info['id']) }}" class="btn-cancel">Hủy bỏ</a>
+            <button type="submit" class="btn-submit">Đăng thông báo</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

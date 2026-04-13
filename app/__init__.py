@@ -34,4 +34,8 @@ def create_app():
     from .supervisor import supervisor_bp
     app.register_blueprint(supervisor_bp)
 
+    from .lecturer import lecturer_bp
+    from .lecturer import routes  
+    app.register_blueprint(lecturer_bp)
+
     return app

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Tạo bài tập mới{% endblock %}
+{% block content %}
+<style>
+    .back-link {
+        display: inline-flex; align-items: center; gap: 6px;
+        color: var(--primary-color); text-decoration: none; font-weight: 600;
+        font-size: 0.9rem; margin-bottom: 16px;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .page-header h2 { font-size: 1.75rem; font-weight: 700; color: var(--text-dark); }
+    .page-header p { color: var(--text-muted); margin-top: 4px; margin-bottom: 30px; }
+    .form-card {
+        background: var(--white); border-radius: 16px; padding: 36px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04); max-width: 750px;
+    }
+    .form-label-custom {
+        font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px;
+    }
+    .form-control-custom {
+        width: 100%; padding: 12px 16px; border: 1px solid var(--border-color);
+        border-radius: 10px; font-size: 0.95rem; outline: none; transition: var(--transition);
+        background: var(--white); font-family: 'Inter', sans-serif;
+    }
+    .form-control-custom:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0,45,142,0.08);
+    }
+    textarea.form-control-custom { resize: vertical; min-height: 140px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .form-group { margin-bottom: 20px; }
+    .form-actions {
+        display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px;
+        padding-top: 24px; border-top: 1px solid var(--border-color);
+    }
+    .btn-cancel {
+        padding: 10px 24px; border-radius: 10px; font-weight: 600;
+        border: 1px solid var(--border-color); background: var(--white);
+        color: var(--text-muted); cursor: pointer; text-decoration: none; font-size: 0.9rem;
+    }
+    .btn-submit {
+        padding: 10px 24px; border-radius: 10px; font-weight: 600;
+        background: #DC2626; color: white; border: none; cursor: pointer; font-size: 0.9rem;
+    }
+    .btn-submit:hover { background: #B91C1C; }
+</style>
+
+<a href="{{ url_for('lecturer.class_detail', class_id=class_info['id']) }}" class="back-link">
+    <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách bài tập
+</a>
+
+<div class="page-header">
+    <h2>Tạo bài tập mới</h2>
+    <p>Xác định yêu cầu và hạn nộp cho mốc tiến độ tiếp theo của sinh viên.</p>
+</div>
+
+<div class="form-card">
+    <form method="POST" action="{{ url_for('lecturer.create_assignment', class_id=class_info['id']) }}">
+        <div class="form-group">
+            <div class="form-label-custom">Tiêu đề bài tập</div>
+            <input type="text" name="title" class="form-control-custom"
+                   placeholder="Ví dụ: Nộp đề cương nghiên cứu" required>
+        </div>
+
+        <div class="form-row">
+            <div>
+                <div class="form-label-custom">Hạn nộp</div>
+                <input type="datetime-local" name="deadline" class="form-control-custom" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-label-custom">Yêu cầu chi tiết</div>
+            <textarea name="description" class="form-control-custom"
+                      placeholder="Mô tả chi tiết yêu cầu, tiêu chí đánh giá..."></textarea>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ url_for('lecturer.class_detail', class_id=class_info['id']) }}" class="btn-cancel">Hủy bỏ</a>
+            <button type="submit" class="btn-submit">Giao bài tập</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -25,11 +25,19 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="/my-projects" class="nav-link {% if 'my-projects' in request.path or 'project-detail' in request.path or 'assignment' in request.path %}active{% endif %}">
                 <i class="fa-solid fa-diagram-project"></i>
                 <span>Đề tài của tôi</span>
             </a>
         </li>
+        {% if session.get('role') == 'lecturer' %}
+        <li class="nav-item">
+            <a href="/lecturer/lop-hoc" class="nav-link {% if '/lecturer/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <span>Quản lý lớp học</span>
+            </a>
+        </li>
+        {% endif %}
         {% if session.get('user_id') %}
         <li class="nav-item">
             <a href="{{ url_for('login.logout') }}" class="nav-link nav-link-danger">

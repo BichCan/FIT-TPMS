@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Tạo lớp mới{% endblock %}
+{% block content %}
+<style>
+    .back-link {
+        display: inline-flex; align-items: center; gap: 6px;
+        color: var(--primary-color); text-decoration: none; font-weight: 600;
+        font-size: 0.9rem; margin-bottom: 16px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .page-header h2 { font-size: 1.75rem; font-weight: 700; color: var(--text-dark); }
+    .page-header p { color: var(--text-muted); margin-top: 4px; margin-bottom: 30px; }
+
+    .form-card {
+        background: var(--white); border-radius: 16px; padding: 36px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04); max-width: 700px;
+    }
+    .form-card .section-title {
+        font-size: 1rem; font-weight: 700; color: var(--text-dark);
+        display: flex; align-items: center; gap: 8px; margin-bottom: 24px;
+    }
+    .form-card .section-title i { color: var(--primary-color); }
+
+    .form-label-custom {
+        font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px;
+    }
+    .form-control-custom {
+        width: 100%; padding: 12px 16px; border: 1px solid var(--border-color);
+        border-radius: 10px; font-size: 0.95rem; outline: none;
+        transition: var(--transition); background: var(--white);
+    }
+    .form-control-custom:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0,45,142,0.08);
+    }
+    select.form-control-custom { cursor: pointer; }
+
+    .form-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* Course type selector */
+    .type-selector { display: flex; gap: 16px; margin-top: 8px; }
+    .type-option {
+        flex: 1; padding: 20px; border: 2px solid var(--border-color);
+        border-radius: 14px; cursor: pointer; transition: var(--transition);
+        text-align: center;
+    }
+    .type-option:hover { border-color: var(--primary-color); }
+    .type-option.selected { border-color: var(--primary-color); background: var(--primary-light); }
+    .type-option input { display: none; }
+    .type-option .type-icon {
+        width: 48px; height: 48px; border-radius: 12px; margin: 0 auto 10px;
+        display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+    }
+    .type-option .type-name { font-weight: 700; color: var(--text-dark); font-size: 0.95rem; }
+    .type-option .type-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+    .icon-da-bg { background: #FEF3C7; color: #D97706; }
+    .icon-kl-bg { background: #DBEAFE; color: #2563EB; }
+
+    .form-actions {
+        display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px;
+        padding-top: 24px; border-top: 1px solid var(--border-color);
+    }
+    .btn-cancel {
+        padding: 10px 24px; border-radius: 10px; font-weight: 600;
+        border: 1px solid var(--border-color); background: var(--white);
+        color: var(--text-muted); cursor: pointer; text-decoration: none;
+        font-size: 0.9rem; transition: var(--transition);
+    }
+    .btn-cancel:hover { border-color: var(--text-muted); color: var(--text-dark); }
+    .btn-submit {
+        padding: 10px 24px; border-radius: 10px; font-weight: 600;
+        background: #DC2626; color: white; border: none; cursor: pointer;
+        font-size: 0.9rem; transition: var(--transition);
+    }
+    .btn-submit:hover { background: #B91C1C; }
+</style>
+
+<a href="{{ url_for('lecturer.classes') }}" class="back-link">
+    <i class="fa-solid fa-arrow-left"></i> Quay lại
+</a>
+
+<div class="page-header">
+    <h2>Tạo lớp mới</h2>
+    <p>Thiết lập không gian làm việc học thuật mới cho sinh viên của bạn. Định cấu hình loại hình đồ án và học kỳ.</p>
+</div>
+
+<div class="form-card">
+    <div class="section-title"><i class="fa-solid fa-gear"></i> Thông tin cơ bản</div>
+    <form method="POST" action="{{ url_for('lecturer.create_class') }}">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+            <div>
+                <div class="form-label-custom">Mã lớp học</div>
+                <input type="text" name="class_code" class="form-control-custom" placeholder="Ví dụ: CS2024-GRAD" required>
+                <div class="form-hint">Mã duy nhất dùng để nhận diện.</div>
+            </div>
+            <div>
+                <div class="form-label-custom">Học kỳ</div>
+                <select name="semester_id" class="form-control-custom" required>
+                    <option value="">Chọn học kỳ</option>
+                    {% for s in semesters %}
+                    <option value="{{ s['id'] }}" {% if s['is_current'] %}selected{% endif %}>
+                        {{ s['name'] }}, {{ s['year'] }}{% if s['is_current'] %} (Hiện tại){% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-label-custom">Loại hình đồ án</div>
+        <div class="type-selector">
+            {% for ct in course_types %}
+            <label class="type-option" onclick="selectType(this)">
+                <input type="radio" name="course_type_id" value="{{ ct['id'] }}" {% if loop.first %}checked{% endif %}>
+                <div class="type-icon {% if ct['type_name'] == 'Đề án' %}icon-da-bg{% else %}icon-kl-bg{% endif %}">
+                    <i class="fa-solid {% if ct['type_name'] == 'Đề án' %}fa-laptop-code{% else %}fa-scroll{% endif %}"></i>
+                </div>
+                <div class="type-name">{{ ct['type_name'] }}</div>
+                <div class="type-desc">
+                    {% if ct['type_name'] == 'Đề án' %}Project-based learning{% else %}Graduation Thesis{% endif %}
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ url_for('lecturer.classes') }}" class="btn-cancel">Hủy bỏ</a>
+            <button type="submit" class="btn-submit">Khởi tạo lớp học</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function selectType(el) {
+    document.querySelectorAll('.type-option').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('input').checked = true;
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const checked = document.querySelector('.type-option input:checked');
+    if (checked) checked.closest('.type-option').classList.add('selected');
+});
+</script>
+{% endblock %}
