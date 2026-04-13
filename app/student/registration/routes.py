@@ -58,24 +58,37 @@ def registration():
     db = get_db()
     cursor = db.cursor()
     user_id = session.get("user_id")
-    registered_lecturer_ids = []
-    
+    registration_statuses = {}
     if user_id:
         cursor.execute("SELECT id FROM students WHERE user_id = ?", (user_id,))
         student_res = cursor.fetchone()
         if student_res:
             student_id = student_res['id']
+            
+            # Lấy các yêu cầu đang chờ duyệt từ bảng registrations
             cursor.execute("""
-                SELECT lecturer_id FROM registrations 
-                WHERE student_id = ? AND semester_id = ?
+                SELECT lecturer_id, course_type_id FROM registrations 
+                WHERE student_id = ? AND semester_id = ? AND status = 'pending'
             """, (student_id, current_semester['id']))
-            registered_lecturer_ids = [row['lecturer_id'] for row in cursor.fetchall()]
+            for row in cursor.fetchall():
+                registration_statuses[f"{row['lecturer_id']}_{row['course_type_id']}"] = 'pending'
+                
+            # Lấy trạng thái đã duyệt từ việc sinh viên thực tế đã được thêm vào lớp ở học kỳ này
+            cursor.execute("""
+                SELECT c.lecturer_id, co.course_type_id 
+                FROM class_students cs
+                JOIN classes c ON cs.class_id = c.id
+                JOIN courses co ON c.course_id = co.id
+                WHERE cs.student_id = ? AND c.semester_id = ? AND c.status = 'active'
+            """, (student_id, current_semester['id']))
+            for row in cursor.fetchall():
+                registration_statuses[f"{row['lecturer_id']}_{row['course_type_id']}"] = 'approved'
 
     return render_template("student/registration.html", 
                          current_semester=current_semester, 
                          project_lecturers=project_lecturers, 
                          thesis_lecturers=thesis_lecturers,
-                         registered_lecturer_ids=registered_lecturer_ids)
+                         registration_statuses=registration_statuses)
 
 @registration_bp.route("/registration/form/<int:lecturer_id>")
 def registration_form(lecturer_id):
@@ -127,6 +140,30 @@ def registration_submit():
     student_id = student_res['id']
     
     try:
+        # Kiểm tra 1: Sinh viên đã có yêu cầu 'pending' cho loại học phần này chưa?
+        cursor.execute("""
+            SELECT id FROM registrations 
+            WHERE student_id = ? AND course_type_id = ? AND semester_id = ? AND status = 'pending'
+        """, (student_id, course_type_id, current_semester['id']))
+        if cursor.fetchone():
+            return jsonify({"success": False, "message": "Bạn đã gửi một yêu cầu cho loại học phần này rồi. Vui lòng hủy yêu cầu cũ trước khi đăng ký giảng viên khác."}), 400
+
+        # Kiểm tra 2: Sinh viên đã có lớp đang hoạt động (approved) cho loại học phần này chưa?
+        cursor.execute("""
+            SELECT 1 FROM class_students cs
+            JOIN classes c ON cs.class_id = c.id
+            JOIN courses co ON c.course_id = co.id
+            WHERE cs.student_id = ? AND co.course_type_id = ? AND c.semester_id = ? AND c.status = 'active'
+        """, (student_id, course_type_id, current_semester['id']))
+        if cursor.fetchone():
+            return jsonify({"success": False, "message": "Bạn đã được tham gia lớp học cho loại học phần này rồi, không thể đăng ký thêm."}), 400
+            
+        # Xóa các bản ghi 'approved' ảo (nếu có) dư thừa trong registrations để tránh lỗi quota
+        cursor.execute("""
+            DELETE FROM registrations 
+            WHERE student_id = ? AND course_type_id = ? AND semester_id = ? AND status = 'approved'
+        """, (student_id, course_type_id, current_semester['id']))
+
         cursor.execute("""
             INSERT INTO registrations (
                 student_id, lecturer_id, course_type_id, semester_id, status, registered_at,

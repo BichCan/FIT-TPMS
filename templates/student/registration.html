@@ -341,8 +341,8 @@
     <script id="thesis-lecturers-data" type="application/json">
         {{ thesis_lecturers | tojson | safe }}
     </script>
-    <script id="registered-lecturers-data" type="application/json">
-        {{ registered_lecturer_ids | tojson | safe }}
+    <script id="registration-statuses-data" type="application/json">
+        {{ registration_statuses | tojson | safe }}
     </script>
 
     <script>
@@ -350,7 +350,7 @@
         let currentType = 'project';
         const projectLecturers = JSON.parse(document.getElementById('project-lecturers-data').textContent);
         const thesisLecturers = JSON.parse(document.getElementById('thesis-lecturers-data').textContent);
-        const registeredLecturers = JSON.parse(document.getElementById('registered-lecturers-data').textContent);
+        const registrationStatuses = JSON.parse(document.getElementById('registration-statuses-data').textContent);
 
     window.onload = () => {
         renderLecturers();
@@ -419,13 +419,34 @@
             `;
 
             let btnHtml = '';
-            if (registeredLecturers.includes(lecturer.id)) {
+            const courseTypeId = currentType === 'project' ? 1 : 2;
+            const statusKey = `${lecturer.id}_${courseTypeId}`;
+            const status = registrationStatuses[statusKey];
+            
+            // Lấy danh sách tất cả các khóa (statusKey) gắn với loại học phần hiện tại
+            const hasRegistrationForRole = Object.keys(registrationStatuses).some(key => key.endsWith(`_${courseTypeId}`));
+            
+            if (status) {
+                if (status === 'approved') {
+                    btnHtml = `
+                        <button class="register-btn" disabled style="background: #10B981; cursor: default;">
+                            <i class="fa-solid fa-check-circle"></i> Yêu cầu đã được duyệt
+                        </button>
+                    `;
+                } else {
+                    btnHtml = `
+                        <button class="register-btn" disabled style="background: #002D8E; margin-bottom: 12px; cursor: default;">
+                            Đã gửi yêu cầu đăng ký
+                        </button>
+                        <button class="register-btn" onclick="cancelRegistration(${lecturer.id})" style="background: #E2E8F0; color: #1F2937;">
+                            Hủy đăng ký
+                        </button>
+                    `;
+                }
+            } else if (hasRegistrationForRole) {
                 btnHtml = `
-                    <button class="register-btn" disabled style="background: #002D8E; margin-bottom: 12px; cursor: default;">
-                        Đã gửi yêu cầu đăng ký
-                    </button>
-                    <button class="register-btn" onclick="cancelRegistration(${lecturer.id})" style="background: #E2E8F0; color: #1F2937;">
-                        Hủy đăng ký
+                    <button class="register-btn" disabled style="background: #94A3B8; cursor: not-allowed;" title="Bạn đã gửi một yêu cầu cho loại học phần này.">
+                        <i class="fa-solid fa-lock"></i> Đã đăng ký GV khác
                     </button>
                 `;
             } else if (remaining === 0) {
