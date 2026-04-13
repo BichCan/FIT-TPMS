@@ -121,7 +121,14 @@
                 </div>
                 {% endif %}
             </div>
-
+<div class="mb-4">
+    <label class="label-caps">Liên kết mã nguồn (GitHub, Google Drive, v.v.)</label>
+    <input type="url" name="source_code_url" class="custom-textarea"
+           style="height: auto;"
+           placeholder="https://github.com/your-username/your-repo"
+           value="{{ submission.source_code_url if submission else '' }}"
+           {% if is_overdue %}disabled style="background-color: #e2e8f0; cursor: not-allowed;"{% endif %}>
+</div>
             <div>
                 <label class="label-caps">Báo cáo tóm tắt tiến độ</label>
                 <textarea name="progress_report" class="custom-textarea" rows="5"
