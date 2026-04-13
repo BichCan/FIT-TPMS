@@ -1,6 +1,6 @@
 from flask import render_template, request
 from app.database import get_db
-from app.supervisor import supervisor_bp
+from app.student.supervisor import supervisor_bp
 
 FACULTY_MAP = {
     'HTTT': 'Hệ thống thông tin',
@@ -32,7 +32,7 @@ def supervisors():
     lecturers = conn.execute(sql, params).fetchall()
     conn.close()
 
-    return render_template("supervisors.html",
+    return render_template("student/supervisors.html",
                            lecturers=lecturers,
                            faculty_map=FACULTY_MAP,
                            q=q)
@@ -55,6 +55,6 @@ def supervisor_detail(lecturer_id):
     if not lecturer:
         return "Không tìm thấy giảng viên", 404
 
-    return render_template("supervisor_detail.html",
+    return render_template("student/supervisor_detail.html",
                            lecturer=lecturer,
                            faculty_map=FACULTY_MAP)

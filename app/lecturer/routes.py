@@ -60,7 +60,7 @@ def classes():
     cur.execute(sql, params)
     classes_list = cur.fetchall()
 
-    return render_template('lecturer_classes.html',
+    return render_template('lecturer/lecturer_classes.html',
                            classes=classes_list, q=q, tab=tab)
 
 
@@ -120,7 +120,7 @@ def create_class():
     cur.execute("SELECT * FROM course_types")
     course_types = cur.fetchall()
 
-    return render_template('lecturer_create_class.html',
+    return render_template('lecturer/lecturer_create_class.html',
                            semesters=semesters, course_types=course_types)
 
 
@@ -204,7 +204,7 @@ def class_detail(class_id):
     announcements = cur.fetchall()
 
     now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    return render_template('lecturer_class_detail.html',
+    return render_template('lecturer/lecturer_class_detail.html',
                            class_info=class_info,
                            students=students,
                            assignments=assignments,
@@ -254,7 +254,7 @@ def create_assignment(class_id):
             conn.rollback()
             flash(f'Lỗi: {str(e)}', 'danger')
 
-    return render_template('lecturer_create_assignment.html', class_info=class_info)
+    return render_template('lecturer/lecturer_create_assignment.html', class_info=class_info)
 
 
 # ============================================================
@@ -384,7 +384,7 @@ def create_announcement(class_id):
             conn.rollback()
             flash(f'Lỗi: {str(e)}', 'danger')
 
-    return render_template('lecturer_create_announcement.html', class_info=class_info)
+    return render_template('lecturer/lecturer_create_announcement.html', class_info=class_info)
 
 
 # ============================================================
@@ -422,7 +422,7 @@ def assignment_submissions(class_id, assignment_id):
     """, (assignment_id,))
     submissions = cur.fetchall()
 
-    return render_template('lecturer_all_submissions.html',
+    return render_template('lecturer/lecturer_all_submissions.html',
                            assignment=assignment,
                            submissions=submissions,
                            class_id=class_id)
@@ -468,7 +468,7 @@ def submission_detail(submission_id):
     """, (submission_id,))
     feedbacks = cur.fetchall()
 
-    return render_template('lecturer_submission_detail.html',
+    return render_template('lecturer/lecturer_submission_detail.html',
                            submission=submission, feedbacks=feedbacks)
 
 

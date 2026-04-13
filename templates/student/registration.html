@@ -255,6 +255,38 @@
         padding: 40px;
         color: #9CA3AF;
     }
+
+    /* QUOTA INFO */
+    .quota-info {
+        background: #F8FAFC;
+        border: 1px dashed var(--border-color);
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .quota-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .quota-value {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .quota-value.full {
+        color: #DC2626;
+    }
+
+    .quota-value.warning {
+        color: #EA580C;
+    }
 </style>
 {% endblock %}
 
@@ -370,10 +402,22 @@
             const researchArea = lecturer.research_area || lecturer.bio || 'Đang cập nhật thông tin nghiên cứu';
 
             const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=002D8E&color=fff&bold=true`;
-
             const card = document.createElement('div');
             card.className = 'lecturer-card';
+
+            const maxStudents = lecturer.max_students || 10;
+            const currentStudents = lecturer.current_students || 0;
+            const remaining = Math.max(0, maxStudents - currentStudents);
             
+            let quotaHtml = `
+                <div class="quota-info">
+                    <span class="quota-label"><i class="fa-solid fa-users"></i> Số sinh viên đăng kí:</span>
+                    <span class="quota-value ${remaining === 0 ? 'full' : (remaining <= 2 ? 'warning' : '')}">
+                        ${currentStudents} / ${maxStudents}
+                    </span>
+                </div>
+            `;
+
             let btnHtml = '';
             if (registeredLecturers.includes(lecturer.id)) {
                 btnHtml = `
@@ -382,6 +426,12 @@
                     </button>
                     <button class="register-btn" onclick="cancelRegistration(${lecturer.id})" style="background: #E2E8F0; color: #1F2937;">
                         Hủy đăng ký
+                    </button>
+                `;
+            } else if (remaining === 0) {
+                btnHtml = `
+                    <button class="register-btn" disabled style="background: #94A3B8; cursor: not-allowed;">
+                        Đã hết chỗ trống
                     </button>
                 `;
             } else {
@@ -404,6 +454,7 @@
                     <span class="focus-title"><i class="fa-solid fa-book"></i> Lĩnh vực nghiên cứu</span>
                     <p class="focus-text">${researchArea}</p>
                 </div>
+                ${quotaHtml}
                 ${btnHtml}
             `;
             container.appendChild(card);

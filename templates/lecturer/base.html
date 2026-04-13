@@ -521,7 +521,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/lecturer/classes" class="nav-link {% if 'classes' in request.path %}active{% endif %}">
+                    <a href="{{ url_for('lecturer.classes') }}" class="nav-link {% if 'lop-hoc' in request.path %}active{% endif %}">
                         <i class="fa-solid fa-user-group"></i>
                         <span>Lớp học</span>
                     </a>

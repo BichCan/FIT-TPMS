@@ -1,187 +1,117 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ lecturer['full_name'] }} | FIT-TPMS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% extends "student/base.html" %}
+
+{% block title %}{{ lecturer['full_name'] }}{% endblock %}
+
+{% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='supervisors.css') }}">
-</head>
-<body>
+{% endblock %}
 
-<!-- ── HEADER ── -->
-<header class="header">
-    <div class="logo-section">
-        <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-        <div class="logo-text">
-            <h1>Đề án/Khóa luận FIT</h1>
-            <span>Khoa Công nghệ thông tin</span>
-        </div>
+{% block content %}
+    <!-- Nút quay lại -->
+    <a href="/giang-vien" class="detail-back">
+        <i class="fa-solid fa-arrow-left"></i> Quay lại
+    </a>
+
+    {% set faculty_code = lecturer['faculty'] or '' %}
+    {% set faculty_name = faculty_map.get(faculty_code, faculty_code) %}
+
+    <!-- Badge khoa -->
+    <div>
+        <span class="detail-faculty-badge faculty-{{ faculty_code if faculty_code in ['HTTT','KHMT','CNPM','MMT','KHDL'] else 'default' }}">
+            Khoa Công nghệ thông tin – {{ faculty_name }}
+        </span>
     </div>
-    <div class="header-actions">
-        <i class="fa-regular fa-bell action-icon"></i>
-        <i class="fa-regular fa-circle-question action-icon"></i>
-        <div class="user-profile">
-            {% if session.get('user_id') %}
-                <div class="avatar">{{ session.get('username')[:2].upper() }}</div>
+
+    <!-- Tên & chức danh -->
+    <h1 class="detail-name">{{ lecturer['full_name'] }}</h1>
+    <p class="detail-position">{{ lecturer['position'] or lecturer['degree'] or 'Giảng viên' }}</p>
+
+    <!-- Layout 2 cột -->
+    <div class="detail-layout">
+
+        <!-- CỘT TRÁI: ảnh + liên hệ -->
+        <div class="detail-left">
+            {% if lecturer['photo_url'] %}
+                <img src="{{ lecturer['photo_url'] }}"
+                     alt="{{ lecturer['full_name'] }}"
+                     class="detail-photo"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="detail-photo-placeholder" style="display:none;">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
             {% else %}
-                <div class="avatar"><i class="fa-solid fa-user" style="font-size:.85rem;"></i></div>
+                <div class="detail-photo-placeholder">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
             {% endif %}
+
+            <!-- Thẻ liên hệ -->
+            <div class="detail-contact-card">
+                <h4>Thông tin liên hệ</h4>
+                {% if lecturer['email'] %}
+                <div class="detail-contact-row">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>{{ lecturer['email'] }}</span>
+                </div>
+                {% endif %}
+                {% if lecturer['phone'] %}
+                <div class="detail-contact-row">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>{{ lecturer['phone'] }}</span>
+                </div>
+                {% endif %}
+                {% if lecturer['office'] %}
+                <div class="detail-contact-row">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>{{ lecturer['office'] }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: tiểu sử, nghiên cứu, giải thưởng -->
+        <div class="detail-right">
+
+            <!-- Tiểu sử -->
+            {% if lecturer['bio'] %}
+            <div>
+                <div class="detail-section-title">
+                    <i class="fa-solid fa-building-columns"></i>
+                    <span>Tiểu sử</span>
+                </div>
+                <p class="detail-bio-text">{{ lecturer['bio'] }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Lĩnh vực nghiên cứu -->
+            {% if lecturer['research_interests'] %}
+            <div>
+                <div class="detail-section-title">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Lĩnh vực nghiên cứu</span>
+                </div>
+                <div class="interest-tags">
+                    {% for tag in lecturer['research_interests'].split(',') %}
+                        {% set tag = tag.strip() %}
+                        {% if tag %}
+                        <span class="interest-tag">{{ tag }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Công trình / Giải thưởng -->
+            {% if lecturer['awards'] %}
+            <div class="awards-card">
+                <div class="awards-icon">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <h4>Công trình & Giải thưởng</h4>
+                <p>{{ lecturer['awards'] }}</p>
+            </div>
+            {% endif %}
+
         </div>
     </div>
-</header>
-
-<div class="layout-wrapper">
-    <!-- ── SIDEBAR (dùng chung) ── -->
-    {% include 'partials/sidebar.html' %}
-
-    <!-- ── NỘI DUNG CHÍNH ── -->
-    <main class="main-content">
-
-        <!-- Nút quay lại -->
-        <a href="/giang-vien" class="detail-back">
-            <i class="fa-solid fa-arrow-left"></i> Quay lại
-        </a>
-
-        {% set faculty_code = lecturer['faculty'] or '' %}
-        {% set faculty_name = faculty_map.get(faculty_code, faculty_code) %}
-
-        <!-- Badge khoa -->
-        <div>
-            <span class="detail-faculty-badge faculty-{{ faculty_code if faculty_code in ['HTTT','KHMT','CNPM','MMT','KHDL'] else 'default' }}">
-                Khoa Công nghệ thông tin – {{ faculty_name }}
-            </span>
-        </div>
-
-        <!-- Tên & chức danh -->
-        <h1 class="detail-name">{{ lecturer['full_name'] }}</h1>
-        <p class="detail-position">{{ lecturer['position'] or lecturer['degree'] or 'Giảng viên' }}</p>
-
-        <!-- Layout 2 cột -->
-        <div class="detail-layout">
-
-            <!-- CỘT TRÁI: ảnh + liên hệ -->
-            <div class="detail-left">
-                {% if lecturer['photo_url'] %}
-                    <img src="{{ lecturer['photo_url'] }}"
-                         alt="{{ lecturer['full_name'] }}"
-                         class="detail-photo"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="detail-photo-placeholder" style="display:none;">
-                        <i class="fa-solid fa-user-tie"></i>
-                    </div>
-                {% else %}
-                    <div class="detail-photo-placeholder">
-                        <i class="fa-solid fa-user-tie"></i>
-                    </div>
-                {% endif %}
-
-                <!-- Thẻ liên hệ -->
-                <div class="detail-contact-card">
-                    <h4>Thông tin liên hệ</h4>
-                    {% if lecturer['email'] %}
-                    <div class="detail-contact-row">
-                        <i class="fa-regular fa-envelope"></i>
-                        <span>{{ lecturer['email'] }}</span>
-                    </div>
-                    {% endif %}
-                    {% if lecturer['phone'] %}
-                    <div class="detail-contact-row">
-                        <i class="fa-solid fa-phone"></i>
-                        <span>{{ lecturer['phone'] }}</span>
-                    </div>
-                    {% endif %}
-                    {% if lecturer['office'] %}
-                    <div class="detail-contact-row">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span>{{ lecturer['office'] }}</span>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- CỘT PHẢI: tiểu sử, nghiên cứu, giải thưởng -->
-            <div class="detail-right">
-
-                <!-- Tiểu sử -->
-                {% if lecturer['bio'] %}
-                <div>
-                    <div class="detail-section-title">
-                        <i class="fa-solid fa-building-columns"></i>
-                        <span>Tiểu sử</span>
-                    </div>
-                    <p class="detail-bio-text">{{ lecturer['bio'] }}</p>
-                </div>
-                {% endif %}
-
-                <!-- Lĩnh vực nghiên cứu -->
-                {% if lecturer['research_interests'] %}
-                <div>
-                    <div class="detail-section-title">
-                        <i class="fa-solid fa-flask"></i>
-                        <span>Lĩnh vực nghiên cứu</span>
-                    </div>
-                    <div class="interest-tags">
-                        {% for tag in lecturer['research_interests'].split(',') %}
-                            {% set tag = tag.strip() %}
-                            {% if tag %}
-                            <span class="interest-tag">{{ tag }}</span>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-
-                <!-- Công trình / Giải thưởng -->
-                {% if lecturer['awards'] %}
-                <div class="awards-card">
-                    <div class="awards-icon">
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                    <h4>Công trình & Giải thưởng</h4>
-                    <p>{{ lecturer['awards'] }}</p>
-                </div>
-                {% endif %}
-
-            </div>
-        </div>
-
-        <!-- ── FOOTER ── -->
-        <footer class="footer">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h4>Thông tin</h4>
-                    <ul class="footer-links">
-                        <li class="footer-link"><a href="#">Giới thiệu</a></li>
-                        <li class="footer-link"><a href="#">Quy chế học thuật</a></li>
-                        <li class="footer-link"><a href="#">Hướng dẫn sử dụng</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Liên hệ</h4>
-                    <div class="contact-info">
-                        <i class="fa-regular fa-envelope"></i> contact@scholaris.edu
-                    </div>
-                    <div class="contact-info">
-                        <i class="fa-solid fa-phone"></i> +84 123 456 789
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <h4>Mạng xã hội</h4>
-                    <div class="social-icons">
-                        <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-solid fa-globe"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-solid fa-share-nodes"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="copyright">&copy; 2024 FIT-TPMS. Bản quyền thuộc Khoa Công nghệ thông tin.</div>
-        </footer>
-
-    </main>
-</div>
-
-</body>
-</html>
+{% endblock %}

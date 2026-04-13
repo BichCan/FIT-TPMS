@@ -1,144 +1,74 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giảng viên hướng dẫn | FIT-TPMS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% extends "student/base.html" %}
+
+{% block title %}Giảng viên hướng dẫn{% endblock %}
+
+{% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='supervisors.css') }}">
-</head>
-<body>
+{% endblock %}
 
-<!-- ── HEADER ── -->
-<header class="header">
-    <div class="logo-section">
-        <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-        <div class="logo-text">
-            <h1>Đề án/Khóa luận FIT</h1>
-            <span>Khoa Công nghệ thông tin</span>
-        </div>
+{% block content %}
+    <!-- Tiêu đề trang -->
+    <div class="sv-header">
+        <h2>Tìm kiếm giảng viên hướng dẫn</h2>
     </div>
-    <div class="header-actions">
-        <i class="fa-regular fa-bell action-icon"></i>
-        <i class="fa-regular fa-circle-question action-icon"></i>
-        <div class="user-profile">
-            {% if session.get('user_id') %}
-                <div class="avatar">{{ session.get('username')[:2].upper() }}</div>
-            {% else %}
-                <div class="avatar"><i class="fa-solid fa-user" style="font-size:.85rem;"></i></div>
-            {% endif %}
+
+    <!-- Thanh tìm kiếm -->
+    <form method="get" action="/giang-vien">
+        <div class="sv-search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+                type="text"
+                name="q"
+                value="{{ q }}"
+                placeholder="Nhập tên giảng viên hoặc chuyên môn nghiên cứu...">
         </div>
-    </div>
-</header>
+    </form>
 
-<div class="layout-wrapper">
-    <!-- ── SIDEBAR (dùng chung) ── -->
-    {% include 'partials/sidebar.html' %}
-
-    <!-- ── NỘI DUNG CHÍNH ── -->
-    <main class="main-content">
-
-        <!-- Tiêu đề trang -->
-        <div class="sv-header">
-            <h2>Tìm kiếm giảng viên hướng dẫn</h2>
-        </div>
-
-        <!-- Thanh tìm kiếm -->
-        <form method="get" action="/giang-vien">
-            <div class="sv-search-wrap">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input
-                    type="text"
-                    name="q"
-                    value="{{ q }}"
-                    placeholder="Nhập tên giảng viên hoặc chuyên môn nghiên cứu...">
-            </div>
-        </form>
-
-        <!-- Grid giảng viên -->
-        {% if lecturers %}
-        <div class="sv-grid">
-            {% for lv in lecturers %}
-            {% set faculty_code = lv['faculty'] or '' %}
-            {% set faculty_name = faculty_map.get(faculty_code, faculty_code) %}
-            <div class="sv-card">
-                <!-- Ảnh + tên -->
-                <div class="sv-card-top">
-                    {% if lv['photo_url'] %}
-                        <img src="{{ lv['photo_url'] }}"
-                             alt="{{ lv['full_name'] }}"
-                             class="sv-card-photo"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="sv-card-photo-placeholder" style="display:none;">
-                            <i class="fa-solid fa-user-tie"></i>
-                        </div>
-                    {% else %}
-                        <div class="sv-card-photo-placeholder">
-                            <i class="fa-solid fa-user-tie"></i>
-                        </div>
-                    {% endif %}
-                    <div>
-                        <div class="sv-card-name">{{ lv['full_name'] }}</div>
-                        <span class="faculty-badge faculty-{{ faculty_code if faculty_code in ['HTTT','KHMT','CNPM','MMT','KHDL'] else 'default' }}">
-                            {{ faculty_name }}
-                        </span>
+    <!-- Grid giảng viên -->
+    {% if lecturers %}
+    <div class="sv-grid">
+        {% for lv in lecturers %}
+        {% set faculty_code = lv['faculty'] or '' %}
+        {% set faculty_name = faculty_map.get(faculty_code, faculty_code) %}
+        <div class="sv-card">
+            <!-- Ảnh + tên -->
+            <div class="sv-card-top">
+                {% if lv['photo_url'] %}
+                    <img src="{{ lv['photo_url'] }}"
+                         alt="{{ lv['full_name'] }}"
+                         class="sv-card-photo"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="sv-card-photo-placeholder" style="display:none;">
+                        <i class="fa-solid fa-user-tie"></i>
                     </div>
-                </div>
-
-                <!-- Chuyên môn chính -->
+                {% else %}
+                    <div class="sv-card-photo-placeholder">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                {% endif %}
                 <div>
-                    <div class="sv-card-label">Chuyên môn chính</div>
-                    <div class="sv-card-spec">{{ lv['specialization'] or 'Chưa cập nhật' }}</div>
-                </div>
-
-                <!-- Nút xem hồ sơ -->
-                <a href="/giang-vien/{{ lv['id'] }}" class="sv-btn">Xem hồ sơ</a>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="sv-empty">
-            <i class="fa-solid fa-magnifying-glass" style="font-size:2rem; margin-bottom:12px; display:block;"></i>
-            Không tìm thấy giảng viên phù hợp với từ khóa "<strong>{{ q }}</strong>"
-        </div>
-        {% endif %}
-
-        <!-- ── FOOTER ── -->
-        <footer class="footer">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h4>Thông tin</h4>
-                    <ul class="footer-links">
-                        <li class="footer-link"><a href="#">Giới thiệu</a></li>
-                        <li class="footer-link"><a href="#">Quy chế học thuật</a></li>
-                        <li class="footer-link"><a href="#">Hướng dẫn sử dụng</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Liên hệ</h4>
-                    <div class="contact-info">
-                        <i class="fa-regular fa-envelope"></i> contact@scholaris.edu
-                    </div>
-                    <div class="contact-info">
-                        <i class="fa-solid fa-phone"></i> +84 123 456 789
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <h4>Mạng xã hội</h4>
-                    <div class="social-icons">
-                        <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-solid fa-globe"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-solid fa-share-nodes"></i></a>
-                    </div>
+                    <div class="sv-card-name">{{ lv['full_name'] }}</div>
+                    <span class="faculty-badge faculty-{{ faculty_code if faculty_code in ['HTTT','KHMT','CNPM','MMT','KHDL'] else 'default' }}">
+                        {{ faculty_name }}
+                    </span>
                 </div>
             </div>
-            <div class="copyright">&copy; 2024 FIT-TPMS. Bản quyền thuộc Khoa Công nghệ thông tin.</div>
-        </footer>
 
-    </main>
-</div>
+            <!-- Chuyên môn chính -->
+            <div>
+                <div class="sv-card-label">Chuyên môn chính</div>
+                <div class="sv-card-spec">{{ lv['specialization'] or 'Chưa cập nhật' }}</div>
+            </div>
 
-</body>
-</html>
+            <!-- Nút xem hồ sơ -->
+            <a href="/giang-vien/{{ lv['id'] }}" class="sv-btn">Xem hồ sơ</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="sv-empty">
+        <i class="fa-solid fa-magnifying-glass" style="font-size:2rem; margin-bottom:12px; display:block;"></i>
+        Không tìm thấy giảng viên phù hợp với từ khóa "<strong>{{ q }}</strong>"
+    </div>
+    {% endif %}
+{% endblock %}
