@@ -68,6 +68,16 @@
                 <div class="form-label-custom">Hạn nộp</div>
                 <input type="datetime-local" name="deadline" class="form-control-custom" required>
             </div>
+            <div>
+                <div class="form-label-custom">Phân loại bài tập</div>
+                <select name="is_final_assignment" class="form-control-custom" required>
+                    <option value="0" selected>Báo cáo tiến độ</option>
+                    <option value="1">Báo cáo cuối kỳ (Cho phép đăng công khai)</option>
+                </select>
+                <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 4px; display: block;">
+                    * Chỉ bài báo cáo cuối mới có nút "Đăng" lên web.
+                </small>
+            </div>
         </div>
 
         <div class="form-group">

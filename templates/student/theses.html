@@ -78,11 +78,11 @@
                         Chỉnh sửa
                     </a>
 
-                    <form action="{{ url_for('thesis.delete_thesis', topic_id=t['id']) }}" method="POST" class="delete-form">
-                        <button type="submit" class="btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                            <i class="fa-solid fa-trash"></i> Xóa
-                        </button>
-                    </form>
+                   <form action="{{ url_for('thesis.delete_published_report', topic_id=t['id']) }}" method="POST" style="display:inline;">
+    <button type="submit" class="btn-delete" onclick="return confirm('Bạn có chắc chắn muốn gỡ báo cáo này khỏi danh sách công khai không?')">
+        <i class="fa-solid fa-trash"></i> Xóa
+    </button>
+</form>
 
                     <a href="/theses/{{ t['id'] }}" class="btn-detail-small">
                         Chi tiết

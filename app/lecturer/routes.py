@@ -238,16 +238,16 @@ def create_assignment(class_id):
         title = request.form.get('title', '').strip()
         description = request.form.get('description', '').strip()
         deadline = request.form.get('deadline', '').strip()
-
+        is_final_assignment = request.form.get('is_final_assignment', 0)
         if not title or not deadline:
             flash('Vui lòng nhập tiêu đề và hạn nộp.', 'danger')
             return redirect(url_for('lecturer.create_assignment', class_id=class_id))
 
         try:
             cur.execute("""
-                INSERT INTO assignments (class_id, title, description, deadline, created_at)
-                VALUES (?, ?, ?, ?, ?)
-            """, (class_id, title, description, deadline, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+                INSERT INTO assignments (class_id, title, description, deadline, created_at,is_final_assignment)
+                VALUES (?, ?, ?, ?, ?,?)
+            """, (class_id, title, description, deadline, datetime.now().strftime('%Y-%m-%d %H:%M:%S'),is_final_assignment))
             conn.commit()
             flash('Tạo bài tập thành công!', 'success')
             return redirect(url_for('lecturer.class_detail', class_id=class_id))

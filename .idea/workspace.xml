@@ -5,14 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="86a4e906-3229-4966-884e-969ceedbba56" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FIT-TPMS.db" beforeDir="false" afterPath="$PROJECT_DIR$/FIT-TPMS.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/login/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/uploads/data.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/student/myprojects/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/student/myprojects/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/student/thesis/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/student/thesis/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/uploads/59_4_2026.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/lecturer/edit_thesis.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/lecturer/edit_thesis.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/FIT-TPMS.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +60,7 @@
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;linh&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;

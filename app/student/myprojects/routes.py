@@ -195,9 +195,9 @@ def submit_assignment(assignment_id):
             pass  # Bỏ qua nếu cấu trúc ngày tháng trong DB bị lưu sai format
 
         progress_report = request.form.get('progress_report')
-
+        source_code_url = request.form.get('source_code_url')
         # Lấy thông tin bài nộp cũ để kiểm tra file hiện tại
-        cur.execute("SELECT file_name, file_url, file_size FROM submissions WHERE assignment_id = ? AND student_id = ?",
+        cur.execute("SELECT file_name,source_code_url, file_url, file_size FROM submissions WHERE assignment_id = ? AND student_id = ?",
                     (assignment_id, student_id))
         existing = cur.fetchone()
 
@@ -225,16 +225,18 @@ def submit_assignment(assignment_id):
             if existing:
                 # Cập nhật: Thông tin file giờ đây sẽ là file mới HOẶC file cũ tùy theo logic trên
                 cur.execute("""
-                            UPDATE submissions 
-                            SET file_name = ?, file_url = ?, file_size = ?, progress_report = ?, submitted_at = CURRENT_TIMESTAMP
-                            WHERE assignment_id = ? AND student_id = ?
-                        """, (file_name, file_url, file_size, progress_report, assignment_id, student_id))
+                        UPDATE submissions 
+                        SET file_name = ?, source_code_url = ?, file_url = ?, file_size = ?, 
+                            progress_report = ?, submitted_at = CURRENT_TIMESTAMP
+                        WHERE assignment_id = ? AND student_id = ?
+                    """, (file_name, source_code_url, file_url, file_size, progress_report, assignment_id, student_id))
             else:
                 # Thêm mới (dành cho lần nộp đầu tiên)
                 cur.execute("""
-                            INSERT INTO submissions (assignment_id, student_id, file_name, file_url, file_size, progress_report)
-                            VALUES (?, ?, ?, ?, ?, ?)
-                        """, (assignment_id, student_id, file_name, file_url, file_size, progress_report))
+                        INSERT INTO submissions (assignment_id, student_id, file_name, source_code_url, 
+                                                file_url, file_size, progress_report)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """, (assignment_id, student_id, file_name, source_code_url, file_url, file_size, progress_report))
 
             conn.commit()
             flash('Cập nhật bài nộp thành công!', 'success')

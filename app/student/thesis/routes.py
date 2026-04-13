@@ -123,17 +123,27 @@ def thesis_detail(topic_id):
 
 
 # 1. Route Xóa đề tài
-@thesis_bp.route("/theses/delete/<int:topic_id>", methods=["POST"])
-def delete_thesis(topic_id):
-    # Giả sử bạn đã có logic kiểm tra Admin ở đây (ví dụ dùng @admin_required)
+@thesis_bp.route("/theses/delete-published/<int:topic_id>", methods=["POST"])
+def delete_published_report(topic_id):
+    # Kiểm tra quyền giảng viên
+    if session.get('role') != 'lecturer':
+        flash("Bạn không có quyền thực hiện thao tác này!", "danger")
+        return redirect(url_for("thesis.thesesprojects"))
+
     conn = get_db()
     cursor = conn.cursor()
     try:
-        cursor.execute("DELETE FROM topics WHERE id = ?", (topic_id,))
+        # CHỈ XÓA ở bảng published_reports
+        # Điều này giúp gỡ bài đăng công khai nhưng vẫn giữ lại Topic gốc của sinh viên
+        cursor.execute("DELETE FROM published_reports WHERE topic_id = ?", (topic_id,))
+
         conn.commit()
-        # Lưu ý: Nếu có file PDF/Source code trên server, bạn nên xóa file đó đi nữa
+        flash("Đã gỡ báo cáo khỏi danh sách công khai thành công!", "success")
     except Exception as e:
-        print(f"Lỗi khi xóa: {e}")
+        conn.rollback()
+        print(f"Lỗi khi gỡ bài: {e}")
+        flash(f"Lỗi hệ thống: {str(e)}", "danger")
+
     return redirect(url_for("thesis.thesesprojects"))
 # 1. Lấy đường dẫn tuyệt đối của thư mục chứa file routes.py hiện tại
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -245,3 +255,82 @@ def edit_thesis(topic_id):
         abort(404)
 
     return render_template("lecturer/edit_thesis.html", t=thesis)
+
+
+@thesis_bp.route("/publish-final-report/<int:submission_id>", methods=["POST"])
+def publish_final_report(submission_id):
+    if session.get('role') != 'lecturer':
+        flash("Chỉ giảng viên mới có quyền đăng!", "danger")
+        return redirect(request.referrer)
+
+    conn = get_db()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    try:
+        # 1. Lấy thông tin bài nộp và kiểm tra is_final_assignment
+        query = """
+            SELECT 
+                s.id AS submission_id, s.student_id, s.assignment_id,
+                t.id AS topic_id, t.title, t.class_id,
+                s.file_url, s.source_code_url,
+                a.is_final_assignment
+            FROM submissions s
+            JOIN assignments a ON s.assignment_id = a.id
+            JOIN topics t ON (s.student_id = t.student_id AND a.class_id = t.class_id)
+            WHERE s.id = ?
+        """
+        data = cursor.execute(query, (submission_id,)).fetchone()
+
+        if not data:
+            flash("Không tìm thấy dữ liệu.", "warning")
+            return redirect(request.referrer)
+
+        # Kiểm tra điều kiện: Phải là bài tập cuối kỳ mới cho đăng
+        if data['is_final_assignment'] != 1:
+            flash("Lỗi: Đây không phải bài tập được cấu hình để đăng công khai.", "danger")
+            return redirect(request.referrer)
+
+        # 2. Tự động đánh dấu bài này là bản cuối (is_final = 1)
+        # Reset các bản khác của cùng sinh viên trong bài tập này về 0
+        cursor.execute("UPDATE submissions SET is_final = 0 WHERE student_id = ? AND assignment_id = ?",
+                       (data['student_id'], data['assignment_id']))
+        # Chốt bản đang chọn thành 1
+        cursor.execute("UPDATE submissions SET is_final = 1 WHERE id = ?", (submission_id,))
+
+        # 3. Chuẩn bị đường dẫn file sạch (Thêm /static nếu thiếu)
+        topic_id = data['topic_id']
+        file_url = data['file_url']
+
+        if file_url:
+            # Nếu đường dẫn bắt đầu bằng /uploads/... thì nối thêm /static vào trước
+            if file_url.startswith('/uploads/'):
+                file_url = '/static' + file_url
+            # Nếu đường dẫn không có dấu gạch chéo ở đầu (ví dụ: uploads/...)
+            elif file_url.startswith('uploads/'):
+                file_url = '/static/' + file_url
+
+        # Kiểm tra xem topic_id này đã tồn tại trong published_reports chưa
+        existing = cursor.execute("SELECT id FROM published_reports WHERE topic_id = ?", (topic_id,)).fetchone()
+
+        if existing:
+            cursor.execute("""
+                        UPDATE published_reports 
+                        SET file_url = ?, source_code_url = ?, published_at = datetime('now')
+                        WHERE topic_id = ?
+                    """, (file_url, data['source_code_url'], topic_id))
+        else:
+            cursor.execute("""
+                        INSERT INTO published_reports (student_id, class_id, topic_id, file_url, source_code_url, published_at)
+                        VALUES (?, ?, ?, ?, ?, datetime('now'))
+                    """, (data['student_id'], data['class_id'], topic_id, file_url, data['source_code_url']))
+
+        conn.commit()
+        print(f"DEBUG: Topic ID {topic_id} ĐÃ FIX đường dẫn thành: {file_url}")
+        flash(f"Đã đăng báo cáo thành công: {data['title']}", "success")
+
+    except Exception as e:
+        conn.rollback()
+        flash(f"Lỗi hệ thống: {str(e)}", "danger")
+
+    return redirect(request.referrer)
