@@ -1,0 +1,582 @@
+{% extends "lecturer/base.html" %}
+
+{% block title %}Danh sách Sinh viên Đăng ký{% endblock %}
+
+{% block styles %}
+<style>
+    :root {
+        --primary-blue: #002D8E;
+        --light-blue: #E7EDFF;
+        --status-pending: #FBBF24;
+        --status-success: #10B981;
+        --status-draft: #9CA3AF;
+        --bg-card: #FFFFFF;
+        --text-main: #1F2937;
+        --text-secondary: #6B7280;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .management-header {
+        margin-bottom: 32px;
+    }
+
+    .management-header h2 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: var(--text-main);
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+    }
+
+    .management-header p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        max-width: 700px;
+        line-height: 1.6;
+    }
+
+    /* CONTROL PANEL */
+    .control-panel {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-tabs {
+        display: flex;
+        background: #F3F4F6;
+        padding: 6px;
+        border-radius: 12px;
+        gap: 4px;
+    }
+
+    .filter-tab {
+        padding: 8px 24px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        background: transparent;
+        text-decoration: none;
+    }
+
+    .filter-tab:hover {
+        color: var(--primary-blue);
+    }
+
+    .filter-tab.active {
+        background: var(--white);
+        color: var(--primary-blue);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .right-controls {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex: 1;
+        justify-content: flex-end;
+    }
+
+    .search-wrapper {
+        position: relative;
+        flex: 1;
+        max-width: 350px;
+    }
+
+    .search-wrapper i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 16px 12px 48px;
+        border-radius: 12px;
+        border: 1px solid #E5E7EB;
+        background: #F9FAFB;
+        font-size: 0.95rem;
+        outline: none;
+        transition: var(--transition);
+    }
+
+    .search-input:focus {
+        background: var(--white);
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 4px rgba(0, 45, 142, 0.05);
+    }
+
+    .bulk-add-btn {
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 4px 10px rgba(0, 45, 142, 0.2);
+        white-space: nowrap;
+    }
+
+    .bulk-add-btn:hover {
+        background: #001f66;
+        transform: translateY(-2px);
+    }
+
+    /* REGISTRATION CARDS */
+    .registrations-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .reg-card {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border: 1px solid #F3F4F6;
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .reg-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--light-blue);
+    }
+
+    /* CHECKBOX STYLING */
+    .selection-area {
+        padding-right: 24px;
+    }
+
+    .custom-checkbox {
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        border-radius: 6px;
+        border: 2px solid #D1D5DB;
+        appearance: none;
+        transition: var(--transition);
+        position: relative;
+        display: block;
+    }
+
+    .custom-checkbox:checked {
+        background-color: var(--primary-blue);
+        border-color: var(--primary-blue);
+    }
+
+    .custom-checkbox:checked::after {
+        content: '\f00c';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        color: white;
+        font-size: 12px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .student-info-box {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex: 1;
+    }
+
+    .student-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        background: #F3F4F6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--primary-blue);
+    }
+
+    .student-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .details h4 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .mssv {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--primary-blue);
+        background: var(--light-blue);
+        padding: 2px 8px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        display: inline-block;
+    }
+
+    .meta-data {
+        display: flex;
+        gap: 32px;
+    }
+
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meta-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #9CA3AF;
+        text-transform: uppercase;
+    }
+
+    .meta-value {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .badge-status {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .badge-project { background: #EEF2FF; color: #6366F1; }
+    .badge-thesis { background: #FDF2F8; color: #EC4899; }
+
+    /* MODAL STYLES */
+    .modal-content { border-radius: 24px; border: none; padding: 0; overflow: hidden; }
+    .modal-header { border-bottom: none; padding: 30px 40px 10px; }
+    .modal-icon-box {
+        width: 50px; height: 50px; background: var(--light-blue); color: var(--primary-blue);
+        border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+    }
+    .modal-title-custom { font-size: 1.5rem; font-weight: 800; margin-top: 20px; }
+    .modal-subtitle-custom { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 24px; }
+    .modal-body { padding: 0 40px 20px; }
+    .class-option {
+        padding: 16px; border-radius: 16px; background: #F9FAFB; border: 2px solid transparent;
+        margin-bottom: 12px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 16px;
+    }
+    .class-option.selected { background: var(--light-blue); border-color: var(--primary-blue); }
+    .modal-footer-custom {
+        display: flex; justify-content: flex-end; align-items: center; gap: 16px;
+        background: #F9FAFB; padding: 24px 40px; border-top: 1px solid #F3F4F6;
+    }
+    .btn-confirm {
+        background: var(--primary-blue); color: white; border: none; padding: 12px 32px;
+        border-radius: 12px; font-weight: 700; transition: var(--transition);
+    }
+    .btn-confirm:disabled { opacity: 0.5; }
+
+    /* DETAIL MODAL CUSTOM */
+    .detail-row { margin-bottom: 24px; }
+    .detail-label { 
+        font-size: 0.8rem; font-weight: 800; color: var(--primary-blue); 
+        text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block;
+    }
+    .detail-content-box { 
+        background: #F8FAFC; padding: 16px; border-radius: 12px; border: 1px solid #E2E8F0;
+        font-size: 1rem; line-height: 1.6; color: var(--text-main);
+    }
+    .student-info-box { cursor: pointer; transition: opacity 0.2s; }
+    .student-info-box:hover { opacity: 0.8; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="management-container">
+    <header class="management-header">
+        <h2>Danh sách Sinh viên Đăng ký</h2>
+        <p>Quản lý các lượt đăng ký giảng viên hướng dẫn. Chọn nhiều sinh viên để thêm vào lớp học cùng lúc.</p>
+    </header>
+
+    <div class="control-panel">
+        <div class="filter-tabs">
+            <a href="{{ url_for('registrationsmanagement.registrations_management', type='all') }}" 
+               class="filter-tab {% if current_filter == 'all' %}active{% endif %}">Tất cả</a>
+            <a href="{{ url_for('registrationsmanagement.registrations_management', type='project') }}" 
+               class="filter-tab {% if current_filter == 'project' %}active{% endif %}">Đề án</a>
+            <a href="{{ url_for('registrationsmanagement.registrations_management', type='thesis') }}" 
+               class="filter-tab {% if current_filter == 'thesis' %}active{% endif %}">Khóa luận</a>
+        </div>
+
+        <div class="right-controls">
+            <div class="search-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" class="search-input" id="searchStudent" placeholder="Tìm tên hoặc MSSV..." oninput="handleSearch()">
+            </div>
+            <button class="bulk-add-btn" onclick="openBulkAssignModal()">
+                <i class="fa-solid fa-plus-circle"></i> Thêm vào lớp
+            </button>
+        </div>
+    </div>
+
+    <div class="registrations-list" id="registrationsList">
+        {% for reg in registrations %}
+        <div class="reg-card" data-name="{{ reg.student_name | lower }}" data-mssv="{{ reg.student_code }}">
+            <div class="selection-area">
+                {% if reg.status == 'pending' %}
+                <input type="checkbox" class="student-checkbox custom-checkbox" 
+                       value="{{ reg.id }}" 
+                       data-coursetype="{{ reg.course_type_id }}"
+                       data-typename="{{ reg.type_name }}">
+                {% else %}
+                <i class="fa-solid fa-check-circle text-success" style="font-size: 20px;"></i>
+                {% endif %}
+            </div>
+
+            <div class="student-info-box" onclick="openDetailModal({{ reg.id }})">
+                <div class="student-avatar">
+                    <img src="https://ui-avatars.com/api/?name={{ reg.student_name | urlencode }}&background=002D8E&color=fff&bold=true" alt="Avatar">
+                </div>
+                <div class="details">
+                    <h4>{{ reg.student_name }}</h4>
+                    <span class="mssv">MSSV: {{ reg.student_code }}</span>
+                    <div class="meta-data">
+                        <div class="meta-item">
+                            <span class="meta-label">Loại</span>
+                            <span class="meta-value">{{ reg.type_name }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Ngày đăng ký</span>
+                            <span class="meta-value">{{ reg.registered_at }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Trạng thái</span>
+                            <span class="meta-value text-capitalize">{{ reg.status }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="badge-status {% if reg.course_type_id == 1 %}badge-project{% else %}badge-thesis{% endif %}">
+                {{ reg.type_name }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal Chọn lớp -->
+<div class="modal fade" id="assignModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon-box"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h3 class="modal-title-custom">Chọn lớp giảng dạy</h3>
+                <p class="modal-subtitle-custom">Thêm <span id="selectedCount" class="fw-bold">0</span> sinh viên vào lớp. Lớp học được lọc theo loại: <span id="currentFilterType" class="badge bg-primary"></span></p>
+            </div>
+            <div class="modal-body">
+                <div id="classList"></div>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn border-0 text-secondary fw-bold" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn-confirm" id="btnConfirmAssign" disabled onclick="confirmAssignment()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Chi tiết đăng ký -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon-box"><i class="fa-solid fa-user-graduate"></i></div>
+                <div>
+                    <h3 class="modal-title-custom" id="detailStudentName" style="margin-top: 5px;">Họ tên sinh viên</h3>
+                    <p class="modal-subtitle-custom" id="detailStudentCode" style="margin-bottom: 0;">MSSV: 21110000</p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="detail-row">
+                    <span class="detail-label">Kiến thức chuyên môn</span>
+                    <div class="detail-content-box" id="detailKnowledge">Chưa có thông tin</div>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Dự án đã thực hiện</span>
+                    <div class="detail-content-box" id="detailProject">Chưa có thông tin</div>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Đề tài dự kiến</span>
+                    <div class="detail-content-box" id="detailTopic">Chưa có thông tin</div>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Loại học phần & Ngày đăng ký</span>
+                    <div style="font-size: 0.95rem; font-weight: 600;" id="detailMeta">Đồ án • 2024-10-15</div>
+                </div>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedRegIds = [];
+    let selectedClassId = null;
+    let assignModal = null;
+    let detailModal = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        assignModal = new bootstrap.Modal(document.getElementById('assignModal'));
+        detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
+    });
+
+    function handleSearch() {
+        const val = document.getElementById('searchStudent').value.toLowerCase();
+        document.querySelectorAll('.reg-card').forEach(card => {
+            const match = card.dataset.name.includes(val) || card.dataset.mssv.includes(val);
+            card.style.display = match ? 'flex' : 'none';
+        });
+    }
+
+    async function openBulkAssignModal() {
+        const checkboxes = document.querySelectorAll('.student-checkbox:checked');
+        if (checkboxes.length === 0) {
+            alert("Vui lòng chọn ít nhất một sinh viên.");
+            return;
+        }
+
+        // Kiểm tra chung CourseType
+        const typeIds = new Set();
+        const typeNames = new Set();
+        checkboxes.forEach(cb => {
+            typeIds.add(cb.dataset.coursetype);
+            typeNames.add(cb.dataset.typename);
+        });
+
+        if (typeIds.size > 1) {
+            alert(`CẢNH BÁO: Bạn đang chọn nhiều loại học phần khác nhau (${Array.from(typeNames).join(', ')}). Vui lòng chỉ chọn cùng một loại học phần để thêm vào lớp.`);
+            return;
+        }
+
+        selectedRegIds = Array.from(checkboxes).map(cb => cb.value);
+        document.getElementById('selectedCount').textContent = selectedRegIds.size || selectedRegIds.length;
+        document.getElementById('currentFilterType').textContent = Array.from(typeNames)[0];
+
+        // Fetch classes
+        const firstRegId = selectedRegIds[0];
+        const classList = document.getElementById('classList');
+        classList.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>';
+        
+        assignModal.show();
+
+        try {
+            const res = await fetch(`/lecturer/api/get-available-classes/${firstRegId}`);
+            const classes = await res.json();
+            
+            if (classes.length === 0) {
+                classList.innerHTML = '<p class="text-center py-4 text-muted">Không tìm thấy lớp học phù hợp cho loại này.</p>';
+            } else {
+                classList.innerHTML = classes.map(cls => `
+                    <div class="class-option" onclick="selectClass(${cls.id}, this)">
+                        <div class="class-icon">${cls.class_code.substring(0,2)}</div>
+                        <div class="class-info">
+                            <h5>${cls.class_code}: ${cls.course_name}</h5>
+                            <p>${cls.semester_name} • ${cls.year}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        } catch (e) {
+            classList.innerHTML = '<p class="text-center py-4 text-danger">Lỗi khi tải danh sách lớp.</p>';
+        }
+    }
+
+    function selectClass(id, el) {
+        selectedClassId = id;
+        document.querySelectorAll('.class-option').forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('btnConfirmAssign').disabled = false;
+    }
+
+    async function confirmAssignment() {
+        const btn = document.getElementById('btnConfirmAssign');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+        try {
+            const res = await fetch('/lecturer/api/assign-to-class', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ registration_ids: selectedRegIds, class_id: selectedClassId })
+            });
+            if ((await res.json()).success) {
+                location.reload();
+            } else {
+                alert("Đã xảy ra lỗi!");
+                btn.disabled = false;
+                btn.textContent = 'Xác nhận';
+            }
+        } catch (e) {
+            btn.disabled = false;
+            btn.textContent = 'Xác nhận';
+        }
+    }
+
+    async function openDetailModal(regId) {
+        // Reset modal fields
+        document.getElementById('detailStudentName').textContent = 'Đang tải...';
+        document.getElementById('detailStudentCode').textContent = '';
+        document.getElementById('detailKnowledge').textContent = '...';
+        document.getElementById('detailProject').textContent = '...';
+        document.getElementById('detailTopic').textContent = '...';
+        document.getElementById('detailMeta').textContent = '';
+
+        detailModal.show();
+
+        try {
+            const res = await fetch(`/lecturer/api/registration-details/${regId}`);
+            const data = await res.json();
+            
+            if (data.error) {
+                alert("Không thể tải thông tin chi tiết.");
+                detailModal.hide();
+                return;
+            }
+
+            document.getElementById('detailStudentName').textContent = data.student_name;
+            document.getElementById('detailStudentCode').textContent = `MSSV: ${data.student_code}`;
+            document.getElementById('detailKnowledge').textContent = data.knowledge || 'Không có thông tin';
+            document.getElementById('detailProject').textContent = data.project || 'Không có thông tin';
+            document.getElementById('detailTopic').textContent = data.topic || 'Không có thông tin';
+            document.getElementById('detailMeta').textContent = `${data.type_name} • ${data.registered_at}`;
+            
+        } catch (e) {
+            alert("Lỗi kết nối máy chủ.");
+            detailModal.hide();
+        }
+    }
+</script>
+{% endblock %}

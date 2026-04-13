@@ -1,105 +1,235 @@
-{% extends "base.html" %}
+
+{% extends "lecturer/base.html" %}
+
 
 {% block title %}Chỉnh sửa đề tài{% endblock %}
 
 {% block styles %}
 <style>
     /* Tổng thể */
-    .edit-container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; font-family: 'Inter', sans-serif; }
-    .back-link { color: #3f51b5; text-decoration: none; font-weight: 600; margin-bottom: 30px; display: inline-flex; align-items: center; gap: 10px; }
+    .edit-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .back-link {
+        color: #3f51b5;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 30px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
 
     /* Header Tiêu đề */
-    .edit-header { margin-bottom: 40px; }
-    .badge-type { background: #e8eaf6; color: #3f51b5; padding: 4px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+    .edit-header {
+        margin-bottom: 40px;
+    }
 
-    .main-title-display { margin: 20px 0; }
+    .badge-type {
+        background: #e8eaf6;
+        color: #3f51b5;
+        padding: 4px 16px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .main-title-display {
+        margin: 20px 0;
+    }
+
     .title-input-ghost {
-        width: 100%; border: none; background: transparent;
-        font-size: 2.5rem; font-weight: 800; color: #1a237e;
-        outline: none; padding: 0; line-height: 1.2;
+        width: 100%;
+        border: none;
+        background: transparent;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1a237e;
+        outline: none;
+        padding: 0;
+        line-height: 1.2;
     }
 
     /* Bố cục 2 cột */
-    .edit-layout { display: grid; grid-template-columns: 1fr 320px; gap: 40px; }
+    .edit-layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 40px;
+    }
 
     /* Cột trái */
     .summary-card {
-        background: white; border-radius: 24px; padding: 30px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f0f0f0;
+        background: white;
+        border-radius: 24px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f0f0f0;
     }
+
     .card-header-custom {
-        display: flex; align-items: center; gap: 10px;
-        color: #1a237e; font-weight: 700; margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #1a237e;
+        font-weight: 700;
+        margin-bottom: 20px;
     }
+
     .description-textarea {
-        width: 100%; border: none; min-height: 250px; outline: none;
-        font-size: 1rem; line-height: 1.8; color: #444; resize: none;
+        width: 100%;
+        border: none;
+        min-height: 250px;
+        outline: none;
+        font-size: 1rem;
+        line-height: 1.8;
+        color: #444;
+        resize: none;
     }
 
     /* Sidebar phải (Tệp đính kèm) */
     .attachment-sidebar {
-        background: #1a237e; border-radius: 24px; padding: 30px; color: white;
+        background: #1a237e;
+        border-radius: 24px;
+        padding: 30px;
+        color: white;
         height: fit-content;
     }
-    .attachment-header { display: flex; align-items: center; gap: 12px; font-weight: 600; margin-bottom: 25px; }
+
+    .attachment-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+        margin-bottom: 25px;
+    }
 
     .file-item-dark {
-        background: rgba(255,255,255,0.1); border-radius: 16px; padding: 15px;
-        display: flex; align-items: center; gap: 12px; margin-bottom: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
     }
+
     .file-icon-box {
-        width: 40px; height: 40px; background: rgba(255,255,255,0.1);
-        border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
     }
-    .file-details .name { font-weight: 600; font-size: 0.9rem; }
-    .file-details .meta { font-size: 0.75rem; opacity: 0.6; }
-    .file-actions-ghost { margin-left: auto; display: flex; gap: 10px; opacity: 0.7; font-size: 0.8rem; }
+
+    .file-details .name {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .file-details .meta {
+        font-size: 0.75rem;
+        opacity: 0.6;
+    }
+
+    .file-actions-ghost {
+        margin-left: auto;
+        display: flex;
+        gap: 10px;
+        opacity: 0.7;
+        font-size: 0.8rem;
+    }
 
     .upload-dashed {
-        border: 2px dashed rgba(255,255,255,0.3); border-radius: 16px;
-        padding: 20px; display: flex; align-items: center; gap: 15px; cursor: pointer;
+        border: 2px dashed rgba(255, 255, 255, 0.3);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
         transition: 0.3s;
     }
-    .upload-dashed:hover { background: rgba(255,255,255,0.05); border-color: white; }
+
+    .upload-dashed:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: white;
+    }
+
     .plus-circle {
-        width: 35px; height: 35px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.4);
-        display: flex; align-items: center; justify-content: center;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     /* Thông tin ngày tháng & Nút Save */
-    .date-info { background: #f5f5f7; padding: 20px; border-radius: 16px; width: fit-content; min-width: 200px; }
+    .date-info {
+        background: #f5f5f7;
+        padding: 20px;
+        border-radius: 16px;
+        width: fit-content;
+        min-width: 200px;
+    }
+
     .btn-save-main {
-        background: #1a237e; color: white; border: none; padding: 15px 45px;
-        border-radius: 12px; font-weight: 700; display: flex; align-items: center; gap: 12px;
+        background: #1a237e;
+        color: white;
+        border: none;
+        padding: 15px 45px;
+        border-radius: 12px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
         transition: 0.3s;
     }
-    .btn-save-main:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(26,35,126,0.2); }
+
+    .btn-save-main:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(26, 35, 126, 0.2);
+    }
 
     /* Responsive */
     @media (max-width: 992px) {
-        .edit-layout { grid-template-columns: 1fr; }
-        .attachment-sidebar { order: -1; }
+        .edit-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .attachment-sidebar {
+            order: -1;
+        }
     }
+
     /* Màu chữ cho input source code trong sidebar */
-.attachment-sidebar input[type="url"] {
-    color: white !important;
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-}
+    .attachment-sidebar input[type="url"] {
+        color: white !important;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    }
 
-.attachment-sidebar input[type="url"]::placeholder {
-    color: rgba(255, 255, 255, 0.5) !important;
-}
+    .attachment-sidebar input[type="url"]::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
 
-/* Fix lỗi màu label source code */
-.attachment-sidebar .form-label-white {
-    color: white;
-    opacity: 0.8;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    display: block;
-}
+    /* Fix lỗi màu label source code */
+    .attachment-sidebar .form-label-white {
+        color: white;
+        opacity: 0.8;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+    }
 </style>
 {% endblock %}
 
@@ -117,7 +247,12 @@
             </div>
 
             <h1 class="main-title-display">
+<<<<<<< HEAD
                 <input type="text" name="title" class="title-input-ghost" value="{{ t['title'] }}" placeholder="Nhập tên đề tài...">
+=======
+                <input type="text" name="title" class="title-input-ghost" value="{{ t['title'] }}"
+                    placeholder="Nhập tên đề tài...">
+>>>>>>> master
             </h1>
 
             <div class="student-info-section">
@@ -132,7 +267,12 @@
                     <div class="card-header-custom">
                         <i class="fa-solid fa-bars-staggered"></i> Tóm tắt nội dung
                     </div>
+<<<<<<< HEAD
                     <textarea name="description" class="description-textarea" placeholder="Nhập nội dung tóm tắt tại đây...">{{ t['description'] }}</textarea>
+=======
+                    <textarea name="description" class="description-textarea"
+                        placeholder="Nhập nội dung tóm tắt tại đây...">{{ t['description'] }}</textarea>
+>>>>>>> master
                 </div>
 
                 <div class="date-info mt-4">
@@ -162,19 +302,17 @@
                         <div class="meta">Báo cáo PDF/DOCX</div>
                     </div>
                     <div class="file-actions-ghost">
-                      <a href="{{ t['file_url'] }}" download="{{ t['file_url'].split('/')[-1] }}" style="color:white">
-    <i class="fa-solid fa-download"></i>
-</a>i></a>
+                        <a href="{{ t['file_url'] }}" download="{{ t['file_url'].split('/')[-1] }}" style="color:white">
+                            <i class="fa-solid fa-download"></i>
+                        </a>
                     </div>
                 </div>
                 {% endif %}
 
                 <div class="mb-3 mt-4">
                     <label class="form-label-white">Link Source Code (GitHub/Drive):</label>
-                    <input type="url" name="source_code_url"
-                           class="form-control form-control-sm"
-                           placeholder="https://github.com/..."
-                           value="{{ t['source_code_url'] or '' }}">
+                    <input type="url" name="source_code_url" class="form-control form-control-sm"
+                        placeholder="https://github.com/..." value="{{ t['source_code_url'] or '' }}">
                 </div>
 
                 <label for="report_file" class="upload-dashed" style="width: 100%; cursor: pointer; margin-top: 15px;">
@@ -191,19 +329,19 @@
 </div>
 
 <script>
-function updateFileName(input) {
-    const status = document.getElementById('file-status');
-    if (input.files.length > 0) {
-        // Cập nhật tên file ngay lập tức lên giao diện khi chọn
-        status.innerHTML = "Đã chọn: " + input.files[0].name;
-        status.style.color = "#4ade80"; // Màu xanh lá sáng cho dễ nhìn
-        status.classList.remove('opacity-75');
-    }
-}document.querySelector('form').onsubmit = function() {
-    const btn = document.querySelector('.btn-save-main');
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-    btn.style.opacity = '0.7';
-    btn.style.pointerEvents = 'none';
-};
+    function updateFileName(input) {
+        const status = document.getElementById('file-status');
+        if (input.files.length > 0) {
+            // Cập nhật tên file ngay lập tức lên giao diện khi chọn
+            status.innerHTML = "Đã chọn: " + input.files[0].name;
+            status.style.color = "#4ade80"; // Màu xanh lá sáng cho dễ nhìn
+            status.classList.remove('opacity-75');
+        }
+    } document.querySelector('form').onsubmit = function () {
+        const btn = document.querySelector('.btn-save-main');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+        btn.style.opacity = '0.7';
+        btn.style.pointerEvents = 'none';
+    };
 </script>
 {% endblock %}

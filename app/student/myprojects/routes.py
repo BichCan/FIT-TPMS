@@ -1,6 +1,6 @@
 from flask import render_template, abort, session, redirect, url_for, request, flash
 from app.database import get_db
-from app.myprojects import myprojects_bp
+from . import myprojects_bp
 import os
 from datetime import datetime
 
@@ -58,7 +58,7 @@ def my_projects():
     cur.execute(query_schedule, (user_id,))
     upcoming_event = cur.fetchone()
 
-    return render_template('myprojects.html',
+    return render_template('student/myprojects.html',
                            registrations=registrations,
                            upcoming_event=upcoming_event)
 
@@ -118,7 +118,7 @@ def project_detail(id):
     """, (class_info['student_pk'], class_info['student_pk'], id))
     assignments = cur.fetchall()
 
-    return render_template('project_detail.html',
+    return render_template('student/project_detail.html',
                            class_info=class_info, topic=topic,
                            latest_notification=latest_notification,
                            assignments=assignments, progress=progress)
@@ -255,4 +255,4 @@ def submit_assignment(assignment_id):
     except ValueError:
         pass
 
-    return render_template('submission.html', assignment=assignment, submission=submission, is_overdue=is_overdue)
+    return render_template('student/submission.html', assignment=assignment, submission=submission, is_overdue=is_overdue)

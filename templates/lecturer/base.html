@@ -219,6 +219,7 @@
             bottom: 0;
             left: 0;
             overflow-y: auto;
+            z-index: 1040;
         }
 
         .nav-menu {
@@ -408,8 +409,8 @@
                 font-size: 0.85rem;
                 white-space: nowrap;
                 margin: 0;
-                z-index: 1000;
-                box-shadow: var(--shadow);
+                z-index: 1050;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             }
 
             .nav-link span::before {
@@ -472,11 +473,7 @@
                 <div class="user-dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     {% if session.get('user_id') %}
                     <div class="avatar">
-                        {% if session.get('role') == 'lecturer' %}
-                        GV
-                        {% else %}
-                        {{ session.get('user_full_name')[:2].upper() if session.get('user_full_name') else 'SV' }}
-                        {% endif %}
+                        {{ session.get('username')[:2].upper() if session.get('username') else 'GV' }}
                     </div>
                     {% else %}
                     <div class="avatar"><i class="fa-solid fa-user"></i></div>
@@ -500,7 +497,7 @@
                     {% else %}
                     <li><a class="dropdown-item py-2 mb-1" href="{{ url_for('login.login') }}"><i
                                 class="fa-solid fa-right-to-bracket me-2"></i>Đăng nhập</a></li>
-                    <li><a class="dropdown-item py-2" href="{{ url_for('login.logins') }}"><i
+                    <li><a class="dropdown-item py-2" href="{{ url_for('login.login') }}"><i
                                 class="fa-solid fa-user-plus me-2"></i>Đăng ký</a></li>
                     {% endif %}
                 </ul>
@@ -512,28 +509,28 @@
         <aside class="sidebar">
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                    <a href="{{ url_for('lecturer_home.home') }}" class="nav-link {% if request.path == url_for('lecturer_home.home') %}active{% endif %}">
                         <i class="fa-solid fa-house"></i>
                         <span>Trang chủ</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/theses-projects" class="nav-link {% if 'theses' in request.path %}active{% endif %}">
+                    <a href="{{ url_for('thesis.thesesprojects') }}" class="nav-link {% if 'theses' in request.path %}active{% endif %}">
                         <i class="fa-solid fa-book-bookmark"></i>
                         <span>Báo cáo</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/registration" class="nav-link {% if 'registration' in request.path %}active{% endif %}">
+                    <a href="/lecturer/classes" class="nav-link {% if 'classes' in request.path %}active{% endif %}">
                         <i class="fa-solid fa-user-group"></i>
-                        <span>Đăng kí GVHD</span>
+                        <span>Lớp học</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/my-projects"
-                        class="nav-link {% if 'my-projects' in request.path or 'project-detail' in request.path or 'assignment' in request.path %}active{% endif %}">
+                    <a href="{{ url_for('registrationsmanagement.registrations_management') }}"
+                        class="nav-link {% if 'registrations' in request.path %}active{% endif %}">
                         <i class="fa-solid fa-diagram-project"></i>
-                        <span>Lớp học</span>
+                        <span>Quản lý sinh viên đăng kí</span>
                     </a>
                 </li>
             </ul>

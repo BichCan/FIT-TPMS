@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends base_template %}
 
 {% block title %}Theses & Projects{% endblock %}
 
@@ -85,7 +85,7 @@
                     </form>
 
                     <a href="/theses/{{ t['id'] }}" class="btn-detail-small">
-                        Xem chi tiết
+                        Chi tiết
                     </a>
                 </div>
             {% else %}

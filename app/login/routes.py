@@ -13,7 +13,7 @@ def login():
         db = get_db()
         cursor = db.cursor() 
         
-        print(f"DEBUG LOGIN: Email={username}, Password={password}, Role={role}")
+        print(f"DEBUG LOGIN: Email={username}, Role={role}")
         
         cursor.execute('SELECT * FROM users WHERE email = ? AND password = ? AND role = ?', 
                        (username, password, role))
@@ -28,15 +28,14 @@ def login():
             
             # ✅ Sửa: So sánh đúng với giá trị trong database
             if user['role'] == 'student':
-                db.close()
                 return redirect(url_for('registration.registration'))
+            elif user['role'] == 'lecturer':
+                return redirect(url_for('registrationsmanagement.registrations_management'))
             else:
                 flash(f"Đăng nhập thành công với vai trò {user['role']}")
-                db.close()
                 return redirect(url_for('registration.registration'))
         else:
             flash('Tài khoản hoặc mật khẩu không đúng')
-            db.close()
             return render_template('login.html')
     
     return render_template('login.html')

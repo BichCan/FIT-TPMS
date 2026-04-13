@@ -3,13 +3,18 @@ import sqlite3
 from flask import render_template, request, redirect, url_for, flash, abort, session
 from werkzeug.utils import secure_filename
 from app.database import get_db
-from app.thesis import thesis_bp
+from . import thesis_bp
 
 @thesis_bp.route("/theses-projects")
 def thesesprojects():
     q = request.args.get("q", "")
     year = request.args.get("year", "")
     type_ = request.args.get("type", "all")
+
+    # Xác định base template dựa trên vai trò
+    base_template = "student/base.html"
+    if session.get('role') == 'lecturer':
+        base_template = "lecturer/base.html"
 
     conn = get_db()
     cursor = conn.cursor()
@@ -21,67 +26,56 @@ def thesesprojects():
     """).fetchall()
 
     sql = """
-    SELECT
-        topics.id,
-        topics.title,
-        topics.description,
-        classes.class_code,
-        courses.course_name,
-        course_types.type_name,
-        users.full_name AS lecturer_name,
-        
-        u2.full_name AS student_name,
-        students.id AS student_code,
-        
-        -- lấy từ published_reports
-        published_reports.published_at,
-        published_reports.file_url,
-        published_reports.source_code_url
-
-    FROM topics
-
-    JOIN classes ON topics.class_id = classes.id
-    JOIN courses ON classes.course_id = courses.id
-    JOIN course_types ON courses.course_type_id = course_types.id
-    JOIN lecturers ON classes.lecturer_id = lecturers.id
-    JOIN users ON lecturers.user_id = users.id
-    
-    JOIN students ON topics.student_id = students.id
-    JOIN users u2 ON students.user_id = u2.id
-
-    LEFT JOIN published_reports
-        ON published_reports.topic_id = topics.id
-
-    WHERE (topics.title LIKE ? OR users.full_name LIKE ?)
-    """
+        SELECT
+            t.id, t.title, t.description,
+            c.class_code, co.course_name, ct.type_name,
+            u_lec.full_name AS lecturer_name,
+            u_stu.full_name AS student_name,
+            s.student_code,
+            pr.published_at, pr.file_url, pr.source_code_url
+        FROM published_reports pr
+        JOIN topics t ON pr.topic_id = t.id
+        JOIN classes c ON t.class_id = c.id
+        JOIN courses co ON c.course_id = co.id
+        JOIN course_types ct ON co.course_type_id = ct.id
+        JOIN lecturers l ON c.lecturer_id = l.id
+        JOIN users u_lec ON l.user_id = u_lec.id
+        JOIN students s ON t.student_id = s.id
+        JOIN users u_stu ON s.user_id = u_stu.id
+        WHERE (t.title LIKE ? OR u_lec.full_name LIKE ?)
+        """
 
     params = [f"%{q}%", f"%{q}%"]
 
     # lọc năm
     if year:
-        sql += " AND strftime('%Y', published_reports.published_at) = ?"
+        sql += " AND strftime('%Y', pr.published_at) = ?"
         params.append(year)
 
     # lọc loại
     if type_ == "project":
-        sql += " AND course_types.type_name = 'Đề án'"
+        sql += " AND ct.type_name = 'Đề án'"
     elif type_ == "thesis":
-        sql += " AND course_types.type_name = 'Khóa luận'"
+        sql += " AND ct.type_name = 'Khóa luận'"
 
     rows = cursor.execute(sql, params).fetchall()
-    conn.close()
 
     return render_template(
-        "theses.html",
+        "student/theses.html",
         theses=rows,
         q=q,
         year=year,
         type=type_,
-        years=years
+        years=years,
+        base_template=base_template
     )
 
 @thesis_bp.route("/theses/<int:topic_id>")
 def thesis_detail(topic_id):
+    base_template = "student/base.html"
+    if session.get('role') == 'lecturer':
+        base_template = "lecturer/base.html"
+
     conn = get_db()
     cursor = conn.cursor()
 
@@ -120,9 +114,14 @@ def thesis_detail(topic_id):
     """
 
     thesis = cursor.execute(sql, (topic_id,)).fetchone()
-    conn.close()
 
-    return render_template("thesis_detail.html", t=thesis)
+    return render_template(
+        "student/thesis_detail.html",
+        t=thesis,
+        base_template=base_template
+    )
+
+
 # 1. Route Xóa đề tài
 @thesis_bp.route("/theses/delete/<int:topic_id>", methods=["POST"])
 def delete_thesis(topic_id):
@@ -135,16 +134,20 @@ def delete_thesis(topic_id):
         # Lưu ý: Nếu có file PDF/Source code trên server, bạn nên xóa file đó đi nữa
     except Exception as e:
         print(f"Lỗi khi xóa: {e}")
-    finally:
-        conn.close()
     return redirect(url_for("thesis.thesesprojects"))
-# Cách sửa an toàn:
-# 1. Lấy đường dẫn đến file hiện tại: .../app/thesis/routes.py
-# 2. Nhảy lên 3 cấp để ra thư mục gốc dự án: .../
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+# 1. Lấy đường dẫn tuyệt đối của thư mục chứa file routes.py hiện tại
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# 3. Trỏ vào static/uploads nằm ở thư mục gốc
+# 2. Nhảy lên 3 cấp để ra thư mục gốc dự án (FIT-TPMS)
+# Cấp 1: ra student/, Cấp 2: ra app/, Cấp 3: ra FIT-TPMS/
+BASE_DIR = os.path.abspath(os.path.join(current_dir, "..", "..", ".."))
+
+# 3. Trỏ vào thư mục static/uploads nằm ở gốc
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
+
+# Kiểm tra và tạo thư mục nếu chưa có để tránh lỗi khi lưu file
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 # 2. Route Cập nhật đề tài (Giao diện Form)
 @thesis_bp.route("/theses/edit/<int:topic_id>", methods=["GET", "POST"])
 def edit_thesis(topic_id):
@@ -221,8 +224,6 @@ def edit_thesis(topic_id):
         except Exception as e:
             conn.rollback()
             flash(f"Lỗi database: {str(e)}", "danger")
-        finally:
-            conn.close()
         return redirect(url_for("thesis.thesesprojects"))
 
     # --- Phần GET dữ liệu cũ giữ nguyên ---
@@ -239,9 +240,8 @@ def edit_thesis(topic_id):
     WHERE t.id = ?
     """
     thesis = cursor.execute(sql, (topic_id,)).fetchone()
-    conn.close()
 
     if not thesis:
         abort(404)
 
-    return render_template("edit_thesis.html", t=thesis)
+    return render_template("lecturer/edit_thesis.html", t=thesis)
