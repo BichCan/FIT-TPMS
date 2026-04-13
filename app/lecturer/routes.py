@@ -195,9 +195,10 @@ def class_detail(class_id):
 
     # Thông báo gần đây
     cur.execute("""
-        SELECT id, title, content, created_at
+        SELECT MIN(id) as id, title, content, created_at
         FROM notifications
         WHERE class_id = ?
+        GROUP BY title, content, created_at
         ORDER BY created_at DESC
         LIMIT 3
     """, (class_id,))

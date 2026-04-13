@@ -315,6 +315,77 @@
 
 {% block content %}
 <div class="management-container">
+
+    {% if require_quota_setup %}
+    <!-- FORCE QUOTA SETUP MODAL -->
+    <div id="quotaModalBackdrop" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 9999; backdrop-filter: blur(4px);"></div>
+    <div id="quotaModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 12px; z-index: 10000; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); width: 90%; max-width: 500px; text-align: center;">
+        <div style="background: var(--light-blue); color: var(--primary-blue); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 20px auto;">
+            <i class="fa-solid fa-users-gear"></i>
+        </div>
+        <h3 style="margin-bottom: 12px; color: var(--text-main); font-weight: 700; font-size: 1.5rem;">Thiết lập Số lượng Sinh viên</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.95rem;">Học kỳ mới cần khai báo số lượng sinh viên tối đa có thể nhận hướng dẫn trước khi xét duyệt.</p>
+        
+        <div style="text-align: left; margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main); font-size: 0.9rem;">Số sinh viên Đề án tối đa:</label>
+            <input type="number" id="projectMaxInput" min="0" max="50" value="10" style="width: 100%; padding: 12px; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 1rem; outline: none;">
+        </div>
+        
+        <div style="text-align: left; margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main); font-size: 0.9rem;">Số sinh viên Khóa luận tối đa:</label>
+            <input type="number" id="thesisMaxInput" min="0" max="50" value="5" style="width: 100%; padding: 12px; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 1rem; outline: none;">
+        </div>
+        
+        <button onclick="submitQuota(this)" style="background: var(--primary-blue); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; transition: opacity 0.2s;">
+            <i class="fa-solid fa-check"></i> Xác nhận thiết lập
+        </button>
+    </div>
+
+    <script>
+        function submitQuota(btn) {
+            const projectMax = document.getElementById('projectMaxInput').value;
+            const thesisMax = document.getElementById('thesisMaxInput').value;
+            
+            if (projectMax === '' || thesisMax === '' || projectMax < 0 || thesisMax < 0) {
+                alert('Vui lòng nhập số lượng hợp lệ (từ 0 trở lên). Nếu đặt 0, giảng viên sẽ không nhận sinh viên cho loại học phần đó.');
+                return;
+            }
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+
+            fetch('/lecturer/api/save-quota', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    project_max: projectMax,
+                    thesis_max: thesisMax
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Có lỗi xảy ra: ' + data.error);
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Xác nhận thiết lập';
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                }
+            })
+            .catch(err => {
+                alert('Lỗi kết nối: ' + err);
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Xác nhận thiết lập';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            });
+        }
+    </script>
+    {% endif %}
+
     <header class="management-header">
         <h2>Danh sách Sinh viên Đăng ký</h2>
         <p>Quản lý các lượt đăng ký giảng viên hướng dẫn. Chọn nhiều sinh viên để thêm vào lớp học cùng lúc.</p>

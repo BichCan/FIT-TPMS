@@ -121,7 +121,7 @@
                 </small>
             </div>
             {% endif %}
-            <a href="#" class="btn-view-all mb-10">Xem tất cả thông báo <i class="fas fa-arrow-right ms-3"></i></a>
+            <a href="#" class="btn-view-all mb-10" onclick="openNotificationsModal(); return false;">Xem tất cả thông báo <i class="fas fa-arrow-right ms-3"></i></a>
         </div>
 
         <div class="profile-card">
@@ -252,4 +252,164 @@
         </div>
     </div>
 </div>
+<!-- MODAL: Tất cả thông báo -->
+<div class="notif-modal-overlay" id="notifModal">
+    <div class="notif-modal-box">
+        <button class="notif-modal-close" onclick="closeNotificationsModal()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <!-- Danh sách thông báo -->
+        <div id="notifListView">
+            <div class="notif-modal-header">
+                <i class="fas fa-bullhorn" style="color: var(--primary-navy);"></i>
+                <h5>Tất cả Thông báo từ Giảng viên</h5>
+            </div>
+            <div class="notif-list">
+                {% if all_notifications %}
+                {% for notif in all_notifications %}
+                <div class="notif-item" onclick="showNotifDetail({{ loop.index0 }})">
+                    <div class="notif-item-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="notif-item-info">
+                        <div class="notif-item-title">{{ notif['title'] }}</div>
+                        <div class="notif-item-date"><i class="far fa-clock"></i> {{ notif['created_at'] }}</div>
+                    </div>
+                    <i class="fas fa-chevron-right notif-item-arrow"></i>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="notif-empty">
+                    <i class="far fa-bell-slash" style="font-size: 2rem; color: #cbd5e0; margin-bottom: 12px;"></i>
+                    <p>Chưa có thông báo nào.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Chi tiết thông báo -->
+        <div id="notifDetailView" style="display: none;">
+            <div class="notif-detail-back" onclick="showNotifList()">
+                <i class="fas fa-arrow-left"></i> Quay lại danh sách
+            </div>
+            <div class="notif-detail-content">
+                <div class="notif-detail-badge"><i class="fas fa-bullhorn"></i></div>
+                <h4 id="notifDetailTitle"></h4>
+                <div class="notif-detail-meta" id="notifDetailDate"></div>
+                <hr style="border: none; border-top: 1px solid #f0f2f5; margin: 16px 0;">
+                <div class="notif-detail-body" id="notifDetailContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Notifications Modal */
+    .notif-modal-overlay {
+        display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        z-index: 3000; align-items: center; justify-content: center;
+        backdrop-filter: blur(3px);
+    }
+    .notif-modal-overlay.active { display: flex; }
+    .notif-modal-box {
+        background: white; border-radius: 20px; padding: 0;
+        width: 92%; max-width: 560px; max-height: 80vh;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.15); position: relative;
+        overflow: hidden; display: flex; flex-direction: column;
+    }
+    .notif-modal-close {
+        position: absolute; top: 18px; right: 18px; background: #f7f8fa; border: none;
+        width: 32px; height: 32px; border-radius: 50%; font-size: 0.9rem;
+        color: #718096; cursor: pointer; z-index: 10; display: flex;
+        align-items: center; justify-content: center; transition: 0.2s;
+    }
+    .notif-modal-close:hover { background: #edf2f7; color: #2d3748; }
+    .notif-modal-header {
+        display: flex; align-items: center; gap: 12px; padding: 24px 28px 16px;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    .notif-modal-header h5 { font-weight: 700; font-size: 1.1rem; margin: 0; color: var(--primary-navy); }
+    .notif-list { overflow-y: auto; max-height: 55vh; padding: 8px 12px; }
+    .notif-item {
+        display: flex; align-items: center; gap: 14px; padding: 16px;
+        border-radius: 12px; cursor: pointer; transition: 0.2s; margin-bottom: 4px;
+    }
+    .notif-item:hover { background: #f8faff; }
+    .notif-item-icon {
+        width: 42px; height: 42px; border-radius: 12px; background: #eff2ff;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--primary-navy); font-size: 0.9rem; flex-shrink: 0;
+    }
+    .notif-item-info { flex: 1; min-width: 0; }
+    .notif-item-title {
+        font-weight: 600; font-size: 0.9rem; color: #2d3748;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .notif-item-date { font-size: 0.78rem; color: #a0aec0; margin-top: 3px; }
+    .notif-item-date i { margin-right: 4px; }
+    .notif-item-arrow { color: #cbd5e0; font-size: 0.7rem; }
+    .notif-empty { text-align: center; padding: 40px 20px; color: #a0aec0; }
+    .notif-empty p { margin: 0; font-size: 0.9rem; }
+
+    /* Detail view */
+    .notif-detail-back {
+        display: flex; align-items: center; gap: 8px; padding: 18px 28px;
+        font-weight: 600; font-size: 0.85rem; color: var(--primary-navy);
+        cursor: pointer; border-bottom: 1px solid #f0f2f5; transition: 0.2s;
+    }
+    .notif-detail-back:hover { background: #f8faff; }
+    .notif-detail-content { padding: 28px; overflow-y: auto; max-height: 60vh; }
+    .notif-detail-badge {
+        width: 48px; height: 48px; border-radius: 14px; background: #eff2ff;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--primary-navy); font-size: 1.1rem; margin-bottom: 16px;
+    }
+    .notif-detail-content h4 { font-weight: 700; font-size: 1.15rem; color: #1a237e; margin-bottom: 8px; }
+    .notif-detail-meta { font-size: 0.82rem; color: #a0aec0; }
+    .notif-detail-meta i { margin-right: 4px; }
+    .notif-detail-body { font-size: 0.95rem; color: #4a5568; line-height: 1.7; white-space: pre-wrap; }
+</style>
+
+<script>
+// Dữ liệu thông báo
+var notificationsData = [
+    {% for notif in all_notifications %}
+    {
+        title: {{ notif['title'] | tojson }},
+        content: {{ notif['content'] | tojson if notif['content'] else '""' }},
+        created_at: {{ notif['created_at'] | tojson }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+
+function openNotificationsModal() {
+    document.getElementById('notifModal').classList.add('active');
+    showNotifList();
+}
+
+function closeNotificationsModal() {
+    document.getElementById('notifModal').classList.remove('active');
+}
+
+function showNotifList() {
+    document.getElementById('notifListView').style.display = 'block';
+    document.getElementById('notifDetailView').style.display = 'none';
+}
+
+function showNotifDetail(index) {
+    var notif = notificationsData[index];
+    document.getElementById('notifDetailTitle').textContent = notif.title;
+    document.getElementById('notifDetailDate').innerHTML = '<i class="far fa-clock"></i> ' + notif.created_at;
+    document.getElementById('notifDetailContent').textContent = notif.content || 'Không có nội dung chi tiết.';
+    document.getElementById('notifListView').style.display = 'none';
+    document.getElementById('notifDetailView').style.display = 'block';
+}
+
+// Close on backdrop click
+document.getElementById('notifModal').addEventListener('click', function(e) {
+    if (e.target === this) closeNotificationsModal();
+});
+</script>
+
 {% endblock %}
