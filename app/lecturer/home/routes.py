@@ -22,6 +22,14 @@ def home():
     db = get_db()
     cursor = db.cursor()
 
+    # Lấy học kỳ hiện tại làm mặc định nếu không có trong tham số
+    cursor.execute("SELECT id FROM semesters WHERE is_current = 1")
+    current_sem_row = cursor.fetchone()
+    default_semester_id = str(current_sem_row['id']) if current_sem_row else ''
+    
+    if not semester_id:
+        semester_id = default_semester_id
+
     # Lấy lecturer_id từ user_id trong session
     cursor.execute("SELECT lecturers.id, full_name FROM lecturers JOIN users ON lecturers.user_id = users.id WHERE users.id = ?", (user_id,))
     lecturer = cursor.fetchone()
@@ -33,9 +41,12 @@ def home():
 
     sql = """
         SELECT classes.*, semesters.name AS semester_name, semesters.year AS semester_year,
-        (SELECT COUNT(*) FROM class_students WHERE class_id = classes.id) as student_count
+               ct.type_name AS course_type,
+               (SELECT COUNT(*) FROM class_students WHERE class_id = classes.id) as student_count
         FROM classes
         LEFT JOIN semesters ON classes.semester_id = semesters.id
+        JOIN courses co ON classes.course_id = co.id
+        JOIN course_types ct ON co.course_type_id = ct.id
         WHERE classes.lecturer_id = ?
     """
 
@@ -50,46 +61,23 @@ def home():
         sql += " AND classes.semester_id = ?"
         params.append(semester_id)
 
+    # Filter by Course Type (DA / KL)
+    if course_type == 'de-an':
+        sql += " AND ct.id = 1" # Giả định 1 là Đề án, 2 là Khóa luận dựa trên business thông thường
+    elif course_type == 'khoa-luan':
+        sql += " AND ct.id = 2"
+
     cursor.execute(sql, params)
     classes = cursor.fetchall()
 
     cursor.execute("SELECT * FROM semesters")
     semesters = cursor.fetchall()
 
-    type_filter = request.args.get('type', '')
-
-    if type_filter == 'de-an':
-        classes = [
-            c for c in classes
-            if c['class_code'].startswith('DA')
-        ]
-
-    elif type_filter == 'khoa-luan':
-        classes = [
-            c for c in classes
-            if c['class_code'].startswith('KL')
-        ]
-
-    def get_course_type(class_code):
-        if class_code.startswith("DA_") or class_code.startswith("DA"):
-            return "Đề án"
-        elif class_code.startswith("KL_") or class_code.startswith("KL"):
-            return "Khóa luận"
-        return "Khác"
-
-    # thêm loại môn học dựa vào MÃ LỚP
-    classes_with_type = []
-    for c in classes:
-        c = dict(c)  # sqlite Row → dict
-        c["course_type"] = get_course_type(c["class_code"])
-        classes_with_type.append(c)
-
-    classes = classes_with_type
-
 
     return render_template(
         'lecturer/home.html',
         lecturer=lecturer,
         classes=classes,
-        semesters=semesters
+        semesters=semesters,
+        selected_semester=semester_id
     )
