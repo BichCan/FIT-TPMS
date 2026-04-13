@@ -374,7 +374,7 @@ select {
 /* Container chứa các nút của giảng viên */
 .admin-controls {
     display: flex;
-    gap: 8px; /* Khoảng cách giữa các nút */
+    gap: 8px; /* Tăng lại gap một chút */
     width: 100%;
     align-items: center;
     margin-top: auto;
@@ -383,21 +383,26 @@ select {
 
 /* Nút Cập nhật */
 .btn-update {
-    flex: 1; /* Chiếm diện tích lớn nhất */
+    flex: 1;
     background-color: #1a237e;
     color: white;
     text-align: center;
-    padding: 10px;
+    padding: 10px 2px;
     border-radius: 10px;
     text-decoration: none;
     font-weight: bold;
-    font-size: 14px;
-    height: 40px;
+    font-size: 13px; /* Tăng cỡ chữ lên 13px */
+    height: 42px; /* Tăng nhẹ chiều cao */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 /* Nút Xóa */
 .delete-form {
-   height: 40px; /* Cố định chiều cao nút để đều nhau */
+    flex: 0.8; /* Nút Xóa có thể nhỏ hơn một chút vì chữ ngắn */
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -408,16 +413,17 @@ select {
     background-color: white;
     color: #555;
     border: 1px solid #ddd;
-    padding: 10px;
+    padding: 10px 2px;
     border-radius: 10px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 5px;
-    height: 40px;
+    gap: 4px;
+    height: 42px;
+    white-space: nowrap;
 }
 
 /* Nút Chi tiết (bản nhỏ) */
@@ -426,15 +432,16 @@ select {
     background-color: #f0f2f5;
     color: #444;
     text-align: center;
-    padding: 10px;
+    padding: 10px 2px;
     border-radius: 10px;
     text-decoration: none;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
+    height: 42px;
+    white-space: nowrap;
 }
 
 /* Hover effects */
