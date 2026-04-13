@@ -219,6 +219,7 @@
             bottom: 0;
             left: 0;
             overflow-y: auto;
+            z-index: 1040;
         }
 
         .nav-menu {
@@ -408,8 +409,8 @@
                 font-size: 0.85rem;
                 white-space: nowrap;
                 margin: 0;
-                z-index: 1000;
-                box-shadow: var(--shadow);
+                z-index: 1050;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             }
 
             .nav-link span::before {
@@ -521,6 +522,12 @@
                     <a href="/theses-projects" class="nav-link {% if 'theses' in request.path %}active{% endif %}">
                         <i class="fa-solid fa-book-bookmark"></i>
                         <span>Báo cáo</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/giang-vien" class="nav-link {% if 'giang-vien' in request.path %}active{% endif %}">
+                        <i class="fa-solid fa-user-tie"></i>
+                        <span>Giảng viên hướng dẫn</span>
                     </a>
                 </li>
                 <li class="nav-item">

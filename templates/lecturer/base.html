@@ -219,6 +219,7 @@
             bottom: 0;
             left: 0;
             overflow-y: auto;
+            z-index: 1040;
         }
 
         .nav-menu {
@@ -408,8 +409,8 @@
                 font-size: 0.85rem;
                 white-space: nowrap;
                 margin: 0;
-                z-index: 1000;
-                box-shadow: var(--shadow);
+                z-index: 1050;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             }
 
             .nav-link span::before {
@@ -520,7 +521,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/lecturer/classes" class="nav-link {% if 'classes' in request.path %}active{% endif %}">
+                    <a href="{{ url_for('lecturer.classes') }}" class="nav-link {% if 'lop-hoc' in request.path %}active{% endif %}">
                         <i class="fa-solid fa-user-group"></i>
                         <span>Lớp học</span>
                     </a>
