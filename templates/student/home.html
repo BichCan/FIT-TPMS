@@ -252,7 +252,7 @@
                 </div>
                 <div class="card-footer">
                     <span style="font-size: 0.85rem; color: var(--text-muted);">Mã lớp: {{ course.class_code }}</span>
-                    <a href="{{ url_for('myprojects.my_projects') }}" class="btn-action">Vào lớp học</a>
+                    <a href="{{ url_for('myprojects.project_detail', id=course.id) }}" class="btn-action">Vào lớp học</a>
                 </div>
             </div>
             {% endfor %}
