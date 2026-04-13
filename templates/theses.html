@@ -58,34 +58,49 @@
 
     <!-- LIST -->
     <div class="list">
-        {% for t in theses %}
-        <div class="card">
-            <div class="year">
-                {{ t["published_at"][:4] if t["published_at"] else "" }}
-            </div>
-
-            <div class="type {{ 'project' if t['type_name']=='Đề án' else 'thesis' }}">
-                {{ t["type_name"] }}
-            </div>
-
-            <h3 class="title">{{ t["title"] }}</h3>
-
-            <p class="student" style="color: black;">{{ t["student_name"] }}</p>
-            <p class="lecturer">GVHD: {{ t["lecturer_name"] }}</p>
-
-            <div class="actions">
-                <a href="{{ t['source_code_url'] or '#' }}" class="link {{ 'disabled' if not t['source_code_url'] else '' }}">
-                    <i class="fa-solid fa-code"></i> Source code
-                </a>
-
-                <a href="{{ t['file_url'] or '#' }}" class="link {{ 'disabled' if not t['file_url'] else '' }}">
-                    <i class="fa-solid fa-download"></i> Tải PDF
-                </a>
-            </div>
-
-            <a href="/theses/{{ t['id'] }}" class="detail-btn">Xem chi tiết</a>
+    {% for t in theses %}
+    <div class="card">
+        <div class="year">
+            {{ t["published_at"][:4] if t["published_at"] else "" }}
         </div>
-        {% endfor %}
+        <div class="type {{ 'project' if t['type_name']=='Đề án' else 'thesis' }}">
+            {{ t["type_name"] }}
+        </div>
+
+        <h3 class="title">{{ t["title"] }}</h3>
+        <p class="student" style="color: black; font-weight: 500;">{{ t["student_name"] }}</p>
+        <p class="lecturer">GVHD: {{ t["lecturer_name"] }}</p>
+
+        <div class="actions">
+            {% if session.get('role') == 'lecturer' %}
+                <div class="admin-controls">
+                    <a href="{{ url_for('thesis.edit_thesis', topic_id=t['id']) }}" class="btn-update">
+                        Chỉnh sửa
+                    </a>
+
+                    <form action="{{ url_for('thesis.delete_thesis', topic_id=t['id']) }}" method="POST" class="delete-form">
+                        <button type="submit" class="btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                            <i class="fa-solid fa-trash"></i> Xóa
+                        </button>
+                    </form>
+
+                    <a href="/theses/{{ t['id'] }}" class="btn-detail-small">
+                        Xem chi tiết
+                    </a>
+                </div>
+            {% else %}
+                <div class="student-controls">
+                    <a href="{{ t['source_code_url'] or '#' }}" class="link {{ 'disabled' if not t['source_code_url'] else '' }}">
+                        <i class="fa-solid fa-code"></i> Source
+                    </a>
+                    <a href="{{ t['file_url'] or '#' }}" class="link {{ 'disabled' if not t['file_url'] else '' }}">
+                        <i class="fa-solid fa-download"></i> PDF
+                    </a>
+                    <a href="/theses/{{ t['id'] }}" class="detail-btn">Xem chi tiết</a>
+                </div>
+            {% endif %}
+        </div>
     </div>
+    {% endfor %}
 </div>
 {% endblock %}
