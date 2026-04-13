@@ -1,0 +1,117 @@
+{% extends "student/base.html" %}
+
+{% block title %}{{ lecturer['full_name'] }}{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='supervisors.css') }}">
+{% endblock %}
+
+{% block content %}
+    <!-- Nút quay lại -->
+    <a href="/giang-vien" class="detail-back">
+        <i class="fa-solid fa-arrow-left"></i> Quay lại
+    </a>
+
+    {% set faculty_code = lecturer['faculty'] or '' %}
+    {% set faculty_name = faculty_map.get(faculty_code, faculty_code) %}
+
+    <!-- Badge khoa -->
+    <div>
+        <span class="detail-faculty-badge faculty-{{ faculty_code if faculty_code in ['HTTT','KHMT','CNPM','MMT','KHDL'] else 'default' }}">
+            Khoa Công nghệ thông tin – {{ faculty_name }}
+        </span>
+    </div>
+
+    <!-- Tên & chức danh -->
+    <h1 class="detail-name">{{ lecturer['full_name'] }}</h1>
+    <p class="detail-position">{{ lecturer['position'] or lecturer['degree'] or 'Giảng viên' }}</p>
+
+    <!-- Layout 2 cột -->
+    <div class="detail-layout">
+
+        <!-- CỘT TRÁI: ảnh + liên hệ -->
+        <div class="detail-left">
+            {% if lecturer['photo_url'] %}
+                <img src="{{ lecturer['photo_url'] }}"
+                     alt="{{ lecturer['full_name'] }}"
+                     class="detail-photo"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="detail-photo-placeholder" style="display:none;">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+            {% else %}
+                <div class="detail-photo-placeholder">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+            {% endif %}
+
+            <!-- Thẻ liên hệ -->
+            <div class="detail-contact-card">
+                <h4>Thông tin liên hệ</h4>
+                {% if lecturer['email'] %}
+                <div class="detail-contact-row">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span>{{ lecturer['email'] }}</span>
+                </div>
+                {% endif %}
+                {% if lecturer['phone'] %}
+                <div class="detail-contact-row">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>{{ lecturer['phone'] }}</span>
+                </div>
+                {% endif %}
+                {% if lecturer['office'] %}
+                <div class="detail-contact-row">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>{{ lecturer['office'] }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: tiểu sử, nghiên cứu, giải thưởng -->
+        <div class="detail-right">
+
+            <!-- Tiểu sử -->
+            {% if lecturer['bio'] %}
+            <div>
+                <div class="detail-section-title">
+                    <i class="fa-solid fa-building-columns"></i>
+                    <span>Tiểu sử</span>
+                </div>
+                <p class="detail-bio-text">{{ lecturer['bio'] }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Lĩnh vực nghiên cứu -->
+            {% if lecturer['research_interests'] %}
+            <div>
+                <div class="detail-section-title">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Lĩnh vực nghiên cứu</span>
+                </div>
+                <div class="interest-tags">
+                    {% for tag in lecturer['research_interests'].split(',') %}
+                        {% set tag = tag.strip() %}
+                        {% if tag %}
+                        <span class="interest-tag">{{ tag }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Công trình / Giải thưởng -->
+            {% if lecturer['awards'] %}
+            <div class="awards-card">
+                <div class="awards-icon">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <h4>Công trình & Giải thưởng</h4>
+                <p>{{ lecturer['awards'] }}</p>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

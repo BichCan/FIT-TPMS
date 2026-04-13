@@ -1,0 +1,300 @@
+{% extends "student/base.html" %}
+
+{% block title %}Trang chủ | FIT-TPMS{% endblock %}
+
+{% block styles %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #002D8E 0%, #001A5E 100%);
+        --accent-gradient: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        --glass-bg: rgba(255, 255, 255, 0.9);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --card-shadow: 0 10px 30px -5px rgba(0, 45, 142, 0.1);
+    }
+
+    .home-container {
+        padding-bottom: 40px;
+    }
+
+    /* GREETING SECTION */
+    .hero-section {
+        background: var(--primary-gradient);
+        border-radius: 24px;
+        padding: 48px;
+        color: white;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 40px -10px rgba(0, 45, 142, 0.3);
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .hero-text h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+    }
+
+    .hero-text p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        line-height: 1.6;
+    }
+
+    /* ONGOING SECTION */
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 24px;
+        padding-left: 4px;
+    }
+
+    .section-title i {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+    }
+
+    .ongoing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 24px;
+        margin-bottom: 60px;
+    }
+
+    .course-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: relative;
+    }
+
+    .course-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 45, 142, 0.15);
+        border-color: var(--primary-color);
+    }
+
+    .card-label {
+        display: inline-flex;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .label-project { background: #EEF2FF; color: #4338CA; }
+    .label-thesis { background: #FFF7ED; color: #9A3412; }
+
+    .card-main h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+        line-height: 1.4;
+    }
+
+    .card-main .lecturer-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 16px;
+        border-top: 1px solid #F3F4F6;
+    }
+
+    .btn-action {
+        padding: 10px 20px;
+        background: var(--primary-light);
+        color: var(--primary-color);
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .btn-action:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    /* LIBRARY SECTION */
+    .library-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+    }
+
+    .library-item {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .library-item:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow);
+    }
+
+    .library-item h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 2.8rem;
+    }
+
+    .item-meta {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .item-tag {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        background: var(--primary-light);
+        padding: 2px 8px;
+        border-radius: 4px;
+        width: fit-content;
+    }
+
+    .empty-state {
+        grid-column: 1/-1;
+        padding: 60px;
+        text-align: center;
+        background: #F9FAFB;
+        border-radius: 20px;
+        border: 2px dashed var(--border-color);
+        color: var(--text-muted);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 16px;
+        opacity: 0.3;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="hero-text">
+            <h1>Chào mừng trở lại!</h1>
+            <p>Khám phá kho tàng kiến thức từ các thế hệ trước và bắt đầu hành trình nghiên cứu của riêng bạn ngay hôm nay.</p>
+        </div>
+    </section>
+
+    <!-- ONGOING COURSES SECTION -->
+    <div class="section-title">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>Học phần đang thực hiện</span>
+    </div>
+    <div class="ongoing-grid">
+        {% if ongoing_courses %}
+            {% for course in ongoing_courses %}
+            <div class="course-card">
+                <div class="card-header-info">
+                    <span class="card-label {% if course.type_name == 'Đề án' %}label-project{% else %}label-thesis{% endif %}">
+                        {{ course.type_name }}
+                    </span>
+                </div>
+                <div class="card-main">
+                    <h3>{{ course.course_name }}</h3>
+                    <div class="lecturer-info">
+                        <i class="fa-solid fa-user-tie"></i>
+                        <span>GV: {{ course.lecturer_name }}</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Mã lớp: {{ course.class_code }}</span>
+                    <a href="{{ url_for('myprojects.my_projects') }}" class="btn-action">Vào lớp học</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <p>Bạn chưa tham gia học phần nào trong học kỳ này.</p>
+                <a href="{{ url_for('registration.registration') }}" class="btn-action mt-3 d-inline-block">Đăng ký ngay</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- THESIS LIBRARY SECTION -->
+    <div class="section-title">
+        <i class="fa-solid fa-book-bookmark"></i>
+        <span>Thư viện đề tài mẫu</span>
+    </div>
+    <div class="library-grid">
+        {% if library_items %}
+            {% for item in library_items %}
+            <a href="{{ url_for('thesis.thesis_detail', topic_id=item.topic_id) }}" style="text-decoration: none;">
+                <div class="library-item">
+                    <span class="item-tag">{{ item.type_name }}</span>
+                    <h4>{{ item.title }}</h4>
+                    <div class="item-meta">
+                        <span><i class="fa-regular fa-user me-1"></i> {{ item.lecturer_name }}</span>
+                        <span><i class="fa-regular fa-calendar me-1"></i> {{ item.published_at[:10] }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+            <div style="grid-column: 1/-1; text-align: center; margin-top: 20px;">
+                <a href="{{ url_for('thesis.thesesprojects') }}" class="btn-action">
+                    Xem thêm <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fa-solid fa-box-open"></i>
+                <p>Thư viện hiện đang trống.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -27,13 +27,14 @@ def login():
             session['role'] = user['role']
             
             # ✅ Sửa: So sánh đúng với giá trị trong database
+            # Redirect to respective home pages
             if user['role'] == 'student':
-                return redirect(url_for('registration.registration'))
+                return redirect(url_for('student_home.home'))
             elif user['role'] == 'lecturer':
-                return redirect(url_for('registrationsmanagement.registrations_management'))
+                return redirect(url_for('lecturer_home.home'))
             else:
                 flash(f"Đăng nhập thành công với vai trò {user['role']}")
-                return redirect(url_for('registration.registration'))
+                return redirect(url_for('student_home.home'))
         else:
             flash('Tài khoản hoặc mật khẩu không đúng')
             return render_template('login.html')

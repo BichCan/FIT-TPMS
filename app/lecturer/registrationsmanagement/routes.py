@@ -146,3 +146,35 @@ def assign_student():
     except Exception as e:
         db.rollback()
         return jsonify({"error": str(e)}), 500
+
+@registrationsmanagement_bp.route('/lecturer/api/registration-details/<int:registration_id>')
+def get_registration_details(registration_id):
+    if 'user_id' not in session or session.get('role') != 'lecturer':
+        return jsonify({"error": "Unauthorized"}), 403
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("""
+        SELECT 
+            r.id,
+            r.knowledge,
+            r.project,
+            r.topic,
+            r.status,
+            r.registered_at,
+            u.full_name AS student_name,
+            s.student_code,
+            ct.type_name
+        FROM registrations r
+        JOIN students s ON r.student_id = s.id
+        JOIN users u ON s.user_id = u.id
+        JOIN course_types ct ON r.course_type_id = ct.id
+        WHERE r.id = ?
+    """, (registration_id,))
+    
+    details = cursor.fetchone()
+    if not details:
+        return jsonify({"error": "Details not found"}), 404
+        
+    return jsonify(dict(details))

@@ -31,4 +31,14 @@ def create_app():
 
     app.register_blueprint(lecturer_home_bp)
 
+    from .student.supervisor import supervisor_bp
+    app.register_blueprint(supervisor_bp)
+
+    from .student.home import student_home_bp
+    app.register_blueprint(student_home_bp)
+
+    from .lecturer import lecturer_bp
+    from .lecturer import routes  
+    app.register_blueprint(lecturer_bp)
+
     return app

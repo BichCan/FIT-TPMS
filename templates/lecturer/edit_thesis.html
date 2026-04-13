@@ -1,4 +1,6 @@
+
 {% extends "lecturer/base.html" %}
+
 
 {% block title %}Chỉnh sửa đề tài{% endblock %}
 
@@ -245,8 +247,12 @@
             </div>
 
             <h1 class="main-title-display">
+<<<<<<< HEAD
+                <input type="text" name="title" class="title-input-ghost" value="{{ t['title'] }}" placeholder="Nhập tên đề tài...">
+=======
                 <input type="text" name="title" class="title-input-ghost" value="{{ t['title'] }}"
                     placeholder="Nhập tên đề tài...">
+>>>>>>> master
             </h1>
 
             <div class="student-info-section">
@@ -261,8 +267,12 @@
                     <div class="card-header-custom">
                         <i class="fa-solid fa-bars-staggered"></i> Tóm tắt nội dung
                     </div>
+<<<<<<< HEAD
+                    <textarea name="description" class="description-textarea" placeholder="Nhập nội dung tóm tắt tại đây...">{{ t['description'] }}</textarea>
+=======
                     <textarea name="description" class="description-textarea"
                         placeholder="Nhập nội dung tóm tắt tại đây...">{{ t['description'] }}</textarea>
+>>>>>>> master
                 </div>
 
                 <div class="date-info mt-4">

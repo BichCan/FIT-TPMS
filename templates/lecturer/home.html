@@ -95,7 +95,7 @@
             <select name="semester" onchange="this.form.submit()">
                 <option value="">Tất cả học kỳ</option>
                 {% for s in semesters %}
-                <option value="{{ s.id }}" {% if request.args.get('semester') == s.id|string %}selected{% endif %}>
+                <option value="{{ s.id }}" {% if selected_semester == s.id|string %}selected{% endif %}>
                     {{ s.name }} {{ s.year }}
                 </option>
                 {% endfor %}

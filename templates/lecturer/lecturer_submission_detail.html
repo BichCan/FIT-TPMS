@@ -1,0 +1,175 @@
+{% extends "lecturer/base.html" %}
+{% block title %}Chi tiết bài nộp{% endblock %}
+{% block content %}
+<style>
+    .back-link {
+        display: inline-flex; align-items: center; gap: 6px;
+        color: var(--primary-color); text-decoration: none; font-weight: 600;
+        font-size: 0.9rem; margin-bottom: 16px;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .sub-badge {
+        display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 3px 12px;
+        border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+        margin-bottom: 10px;
+    }
+    .badge-final { background: #D1FAE5; color: #065F46; }
+    .badge-normal { background: #DBEAFE; color: #1E40AF; }
+
+    .page-header h2 { font-size: 1.6rem; font-weight: 700; color: var(--text-dark); }
+    .page-header .student-info {
+        font-size: 0.95rem; color: var(--text-muted); margin-top: 4px; margin-bottom: 28px;
+    }
+
+    .detail-grid { display: grid; grid-template-columns: 1fr 400px; gap: 24px; }
+
+    .card-section {
+        background: var(--white); border-radius: 14px; padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 20px;
+    }
+    .card-section h5 {
+        font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 16px;
+    }
+
+    /* File card */
+    .file-card {
+        display: flex; align-items: center; gap: 14px;
+        background: #F9FAFB; border-radius: 10px; padding: 14px 18px; margin-bottom: 16px;
+    }
+    .file-icon {
+        width: 42px; height: 42px; border-radius: 10px; background: #FEE2E2;
+        display: flex; align-items: center; justify-content: center;
+        color: #DC2626; font-size: 1.1rem;
+    }
+    .file-info { flex: 1; }
+    .file-info .file-name { font-weight: 600; color: var(--text-dark); font-size: 0.9rem; }
+    .file-info .file-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+    .file-download {
+        color: var(--text-muted); font-size: 1rem; text-decoration: none;
+        transition: var(--transition);
+    }
+    .file-download:hover { color: var(--primary-color); }
+
+    .description-text {
+        font-size: 0.9rem; color: var(--text-dark); line-height: 1.7;
+        font-style: italic; padding: 14px 18px; background: #F9FAFB;
+        border-radius: 10px; border-left: 3px solid var(--primary-color);
+    }
+
+    /* Feedback area */
+    .feedback-label {
+        font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px;
+    }
+    .feedback-textarea {
+        width: 100%; padding: 14px; border: 1px solid var(--border-color);
+        border-radius: 10px; font-size: 0.9rem; outline: none; resize: vertical;
+        min-height: 120px; font-family: 'Inter', sans-serif;
+        transition: var(--transition);
+    }
+    .feedback-textarea:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0,45,142,0.08);
+    }
+    .btn-feedback {
+        display: block; width: 100%; padding: 12px; margin-top: 12px;
+        background: #DC2626; color: white; border: none; border-radius: 10px;
+        font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: var(--transition);
+    }
+    .btn-feedback:hover { background: #B91C1C; }
+
+    /* Existing feedbacks */
+    .feedback-item {
+        padding: 14px 0; border-bottom: 1px solid #F3F4F6;
+    }
+    .feedback-item:last-child { border-bottom: none; }
+    .feedback-header {
+        display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+    }
+    .feedback-author { font-weight: 600; font-size: 0.85rem; color: var(--primary-color); }
+    .feedback-date { font-size: 0.75rem; color: var(--text-muted); }
+    .feedback-content { font-size: 0.9rem; color: var(--text-dark); line-height: 1.6; }
+
+    @media (max-width: 1024px) { .detail-grid { grid-template-columns: 1fr; } }
+</style>
+
+<a href="{{ url_for('lecturer.class_detail', class_id=submission['class_id']) }}" class="back-link">
+    <i class="fa-solid fa-arrow-left"></i> Quay lại
+</a>
+
+<div class="page-header">
+    <span class="sub-badge {% if submission['is_final'] %}badge-final{% else %}badge-normal{% endif %}">
+        {% if submission['is_final'] %}Bài nộp cuối cùng{% else %}Bài nộp{% endif %}
+    </span>
+    <h2>Chi tiết Bài nộp</h2>
+    <div class="student-info">
+        Sinh viên: <strong>{{ submission['student_name'] }}</strong> ({{ submission['student_code'] }})
+        &middot; {{ submission['assignment_title'] }}
+    </div>
+</div>
+
+<div class="detail-grid">
+    <!-- CỘT TRÁI: Thông tin bài nộp -->
+    <div>
+        <div class="card-section">
+            <h5>File báo cáo</h5>
+            {% if submission['file_name'] %}
+            <div class="file-card">
+                <div class="file-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                <div class="file-info">
+                    <div class="file-name">{{ submission['file_name'] }}</div>
+                    <div class="file-meta">
+                        {% if submission['file_size'] %}
+                            {{ (submission['file_size'] / 1048576)|round(1) }} MB &middot;
+                        {% endif %}
+                        Nộp lúc {{ submission['submitted_at'] }}
+                    </div>
+                </div>
+                {% if submission['file_url'] %}
+                <a href="{{ submission['file_url'] }}" target="_blank" class="file-download" title="Tải xuống">
+                    <i class="fa-solid fa-download"></i>
+                </a>
+                {% endif %}
+            </div>
+            {% else %}
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Không có file đính kèm.</p>
+            {% endif %}
+
+            {% if submission['progress_report'] %}
+            <h5 style="margin-top: 20px;">Mô tả / Tóm tắt</h5>
+            <div class="description-text">
+                "{{ submission['progress_report'] }}"
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- CỘT PHẢI: Nhận xét -->
+    <div>
+        <div class="card-section">
+            <h5>Nhận xét của Giảng viên</h5>
+            <form method="POST" action="{{ url_for('lecturer.add_feedback', submission_id=submission['id']) }}">
+                <div class="feedback-label">Nội dung nhận xét</div>
+                <textarea name="content" class="feedback-textarea"
+                          placeholder="Nhập nhận xét chi tiết cho bài nộp này..." required></textarea>
+                <button type="submit" class="btn-feedback">Gửi nhận xét</button>
+            </form>
+
+            {% if feedbacks %}
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #F3F4F6;">
+            <h5>Nhận xét trước đó</h5>
+            {% for f in feedbacks %}
+            <div class="feedback-item">
+                <div class="feedback-header">
+                    <span class="feedback-author"><i class="fa-solid fa-user-tie me-1"></i>{{ f['lecturer_name'] }}</span>
+                    <span class="feedback-date">{{ f['created_at'] }}</span>
+                </div>
+                <div class="feedback-content">{{ f['content'] }}</div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
