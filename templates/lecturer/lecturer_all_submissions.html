@@ -109,10 +109,20 @@
                 </td>
                 <td style="font-size: 0.82rem; color: var(--text-muted);">{{ s['feedback_count'] }} nhận xét</td>
                 <td>
-                    <a href="{{ url_for('lecturer.submission_detail', submission_id=s['id']) }}" class="btn-view">
-                        <i class="fa-solid fa-eye"></i> Xem
-                    </a>
-                </td>
+    <div style="display: flex; gap: 8px; align-items: center;">
+        <a href="{{ url_for('lecturer.submission_detail', submission_id=s['id']) }}" class="btn-view">
+            <i class="fa-solid fa-eye"></i> Xem
+        </a>
+
+        <form action="{{ url_for('thesis.publish_final_report', submission_id=s['id']) }}" method="POST" style="margin: 0;">
+            <button type="submit" class="btn-view"
+                    style="background-color: #059669; border: none; cursor: pointer; white-space: nowrap;"
+                    onclick="return confirm('Xác nhận lấy file từ bản nộp này để đăng/cập nhật báo cáo công khai?')">
+                <i class="fa-solid fa-share-from-square"></i> Đăng
+            </button>
+        </form>
+    </div>
+</td>
             </tr>
             {% endfor %}
         </tbody>
